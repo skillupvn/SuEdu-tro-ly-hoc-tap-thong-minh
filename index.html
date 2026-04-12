@@ -1,0 +1,2454 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SkillupEdu AI — Trợ Lý Học Tập Thông Minh</title>
+<style>
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c1:#00c896;--c2:#007cf0;--c3:#7928ca;--c4:#ff4d4d;--c5:#f7971e;
+  --bg:#0f1117;--bg2:#161b27;--bg3:#1e2535;--bg4:#252d3d;
+  --text:#e8eaf6;--text2:#9ba3bc;--text3:#c5cae9;
+  --border:#2e3650;--border2:#3d4a6b;
+  --shadow:0 4px 24px rgba(0,0,0,.45);
+  --radius:14px;--radius-sm:8px;
+  --font:'Segoe UI',system-ui,sans-serif;
+  --transition:.22s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+input,select,textarea,button{font-family:var(--font)}
+.app-wrap{display:flex;min-height:100vh;flex-direction:column}
+.app-header{
+  background:linear-gradient(135deg,#0d1b35 0%,#0f1f3d 100%);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 20px rgba(0,200,150,.08);
+}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.35rem;font-weight:800;letter-spacing:-.5px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--c1),var(--c2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.logo span{background:linear-gradient(90deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo small{font-size:.65rem;font-weight:400;color:var(--text2);display:block;margin-top:-4px;-webkit-text-fill-color:var(--text2)}
+.header-actions{display:flex;align-items:center;gap:10px}
+.nav-tabs{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 20px;display:flex;gap:2px;overflow-x:auto;
+  scrollbar-width:none;position:sticky;top:64px;z-index:190;
+}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{
+  padding:14px 20px;border:none;background:transparent;color:var(--text2);
+  cursor:pointer;font-size:.88rem;font-weight:600;white-space:nowrap;
+  border-bottom:3px solid transparent;transition:var(--transition);
+  display:flex;align-items:center;gap:7px;
+}
+.nav-tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:var(--c1);border-bottom-color:var(--c1)}
+.nav-badge{background:var(--c4);color:#fff;border-radius:10px;padding:1px 6px;font-size:.7rem}
+.main-content{flex:1;padding:24px 20px;max-width:1100px;margin:0 auto;width:100%}
+.panel{display:none;animation:fadeUp .3s ease}
+.panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.form-row{display:grid;gap:16px;margin-bottom:16px}
+.form-row.cols-2{grid-template-columns:1fr 1fr}
+.form-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.fgroup{display:flex;flex-direction:column;gap:6px}
+.fgroup label{font-size:.82rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.fgroup select,.fgroup input,.fgroup textarea{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  padding:11px 14px;font-size:.93rem;transition:var(--transition);width:100%;
+}
+.fgroup select:focus,.fgroup input:focus,.fgroup textarea:focus{
+  outline:none;border-color:var(--c1);box-shadow:0 0 0 3px rgba(0,200,150,.15);
+}
+.fgroup textarea{resize:vertical;min-height:90px;line-height:1.6}
+.fgroup select option{background:var(--bg3)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 22px;border:none;border-radius:var(--radius-sm);
+  font-size:.9rem;font-weight:700;cursor:pointer;transition:var(--transition);
+  letter-spacing:.2px;white-space:nowrap;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;box-shadow:0 4px 14px rgba(0,200,150,.3)}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(0,200,150,.45);transform:translateY(-1px)}
+.btn-secondary{background:var(--bg4);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{background:var(--bg3);border-color:var(--c1);color:var(--c1)}
+.btn-danger{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff}
+.btn-danger:hover{box-shadow:0 4px 14px rgba(231,76,60,.4)}
+.btn-sm{padding:7px 14px;font-size:.8rem}
+.btn-icon{padding:9px;border-radius:8px;background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.btn-icon:hover{color:var(--c1);border-color:var(--c1)}
+.btn-block{width:100%}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:600;background:var(--bg4);border:1px solid var(--border2);color:var(--text2)}
+.chip.active,.chip:hover{background:rgba(0,200,150,.15);border-color:var(--c1);color:var(--c1);cursor:pointer}
+.toggle-wrap{display:flex;align-items:center;gap:10px;cursor:pointer}
+.toggle{width:42px;height:24px;background:var(--border2);border-radius:12px;position:relative;transition:var(--transition);flex-shrink:0}
+.toggle.on{background:var(--c1)}
+.toggle::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:var(--transition);box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.toggle.on::after{left:21px}
+.toggle-label{font-size:.88rem;color:var(--text2);user-select:none}
+.alert{padding:12px 16px;border-radius:var(--radius-sm);margin-bottom:14px;font-size:.88rem;display:flex;align-items:flex-start;gap:10px;animation:fadeUp .25s ease}
+.alert-success{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:#2ecc71}
+.alert-error{background:rgba(255,77,77,.12);border:1px solid rgba(255,77,77,.3);color:#ff6b6b}
+.alert-info{background:rgba(0,124,240,.12);border:1px solid rgba(0,124,240,.3);color:#60a5fa}
+.alert-warn{background:rgba(247,151,30,.12);border:1px solid rgba(247,151,30,.3);color:#fbbf24}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.badge-green{background:rgba(0,200,150,.2);color:var(--c1)}
+.badge-red{background:rgba(255,77,77,.2);color:var(--c4)}
+.badge-blue{background:rgba(0,124,240,.2);color:var(--c2)}
+.badge-purple{background:rgba(121,40,202,.2);color:#a78bfa}
+.sec-title{font-size:1.1rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border);margin-left:10px}
+.progress-bar{width:100%;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:10px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));border-radius:4px;transition:width .5s ease}
+.spin-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px;text-align:center}
+.spinner{width:44px;height:44px;border:4px solid var(--border);border-top-color:var(--c1);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-text{color:var(--text2);font-size:.9rem}
+.spin-dots::after{content:'';animation:dots 1.5s infinite}
+@keyframes dots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+.divider{height:1px;background:var(--border);margin:20px 0}
+#toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);padding:14px 18px;
+  min-width:260px;max-width:360px;font-size:.88rem;
+  box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;
+  animation:slideInRight .3s ease;pointer-events:all;
+}
+.toast.hide{animation:slideOutRight .3s ease forwards}
+@keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
+.toast-icon{font-size:1.2rem;flex-shrink:0}
+.toast-content .toast-title{font-weight:700;margin-bottom:2px}
+.toast-content .toast-msg{color:var(--text2);font-size:.82rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+.modal-overlay.hide{animation:fadeOut .2s ease forwards}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);max-width:560px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
+.modal-title{font-size:1.05rem;font-weight:700}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.apikey-list{display:flex;flex-direction:column;gap:12px}
+.apikey-item{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px 16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  transition:var(--transition);
+}
+.apikey-item:hover{border-color:var(--border2)}
+.apikey-item.active-key{border-color:var(--c1);box-shadow:0 0 0 2px rgba(0,200,150,.15)}
+.apikey-provider{width:120px;flex-shrink:0}
+.apikey-input-wrap{flex:1;min-width:180px;position:relative}
+.apikey-field{
+  width:100%;background:var(--bg4);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  padding:10px 40px 10px 14px;font-size:.88rem;font-family:monospace;
+  letter-spacing:.1em;transition:var(--transition);
+}
+.apikey-field:focus{outline:none;border-color:var(--c1);box-shadow:0 0 0 3px rgba(0,200,150,.15)}
+.apikey-eye{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--text2);font-size:1rem;
+  transition:var(--transition);padding:4px;
+}
+.apikey-eye:hover{color:var(--c1)}
+.apikey-status{width:20px;height:20px;border-radius:50%;flex-shrink:0}
+.apikey-status.ok{background:var(--c1);box-shadow:0 0 8px rgba(0,200,150,.5)}
+.apikey-status.fail{background:var(--c4)}
+.apikey-status.idle{background:var(--border2)}
+.apikey-quota{font-size:.75rem;color:var(--text2);white-space:nowrap}
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.model-card{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;cursor:pointer;
+  transition:var(--transition);position:relative;
+}
+.model-card:hover{border-color:var(--border2);background:var(--bg4)}
+.model-card.selected{border-color:var(--c1);background:rgba(0,200,150,.08)}
+.model-card.selected::after{content:'✓';position:absolute;top:8px;right:10px;color:var(--c1);font-weight:800;font-size:1rem}
+.model-name{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.model-meta{font-size:.74rem;color:var(--text2)}
+.model-provider-badge{font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:600;display:inline-block;margin-bottom:6px}
+.source-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.source-tab{
+  padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:600;
+  border:1.5px solid var(--border);background:var(--bg3);color:var(--text2);
+  cursor:pointer;transition:var(--transition);display:flex;align-items:center;gap:6px;
+}
+.source-tab:hover{border-color:var(--border2);color:var(--text)}
+.source-tab.active{background:rgba(0,200,150,.15);border-color:var(--c1);color:var(--c1)}
+.source-panel{display:none}
+.source-panel.active{display:block;animation:fadeUp .2s ease}
+.url-list{display:flex;flex-direction:column;gap:8px}
+.url-item{display:flex;gap:8px;align-items:center}
+.url-item input{flex:1}
+.file-drop-zone{
+  border:2px dashed var(--border);border-radius:var(--radius-sm);
+  padding:30px;text-align:center;cursor:pointer;
+  transition:var(--transition);color:var(--text2);
+  background:var(--bg3);
+}
+.file-drop-zone:hover,.file-drop-zone.drag{border-color:var(--c1);background:rgba(0,200,150,.06);color:var(--text)}
+.file-drop-zone .drop-icon{font-size:2.2rem;margin-bottom:10px}
+.file-items{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.file-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg4);padding:8px 12px;border-radius:6px;font-size:.82rem}
+.source-result-preview{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px;
+  font-size:.82rem;line-height:1.7;color:var(--text2);
+  max-height:200px;overflow-y:auto;margin-top:12px;
+}
+.quiz-header{
+  background:linear-gradient(135deg,#0d1b35,#0f1f3d);
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.quiz-meta{font-size:.85rem;color:var(--text2)}
+.quiz-progress-label{font-size:.88rem;font-weight:600;color:var(--text3)}
+.timer-wrap{display:flex;align-items:center;gap:8px;font-size:1.1rem;font-weight:800;font-family:monospace}
+.timer-display{
+  background:var(--bg4);border:2px solid var(--border2);
+  border-radius:8px;padding:6px 14px;min-width:90px;text-align:center;
+  transition:var(--transition);
+}
+.timer-display.warn{border-color:#f59e0b;color:#f59e0b;animation:pulse .8s ease infinite}
+.timer-display.danger{border-color:var(--c4);color:var(--c4);animation:pulse .4s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.q-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:28px;margin-bottom:16px;
+}
+.q-num{font-size:.78rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.q-emoji{font-size:2.5rem;margin-bottom:14px;display:block}
+.q-text{font-size:1.08rem;font-weight:600;line-height:1.65;margin-bottom:22px;color:var(--text)}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:14px 18px;
+  cursor:pointer;transition:var(--transition);
+  display:flex;align-items:center;gap:12px;font-size:.93rem;
+}
+.q-opt:hover{border-color:var(--c2);background:rgba(0,124,240,.08)}
+.q-opt.picked{border-color:var(--c2);background:rgba(0,124,240,.12);color:#60a5fa}
+.q-opt.correct{border-color:var(--c1);background:rgba(0,200,150,.12);color:var(--c1)}
+.q-opt.wrong{border-color:var(--c4);background:rgba(255,77,77,.1);color:#ff6b6b}
+.q-opt.disabled{pointer-events:none}
+.opt-letter{
+  width:28px;height:28px;border-radius:6px;
+  background:var(--bg4);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.82rem;flex-shrink:0;transition:var(--transition);
+}
+.q-opt.picked .opt-letter{background:var(--c2);color:#fff}
+.q-opt.correct .opt-letter{background:var(--c1);color:#fff}
+.q-opt.wrong .opt-letter{background:var(--c4);color:#fff}
+.q-explain{
+  background:rgba(0,200,150,.07);border:1px solid rgba(0,200,150,.25);
+  border-radius:var(--radius-sm);padding:14px;margin-top:14px;
+  font-size:.88rem;color:var(--text3);line-height:1.7;animation:fadeUp .3s ease;
+}
+.q-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.result-hero{
+  text-align:center;padding:40px 20px;
+  background:linear-gradient(135deg,#0d1b35,#0a0f1e);
+  border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;
+}
+.result-score{font-size:4rem;font-weight:900;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.result-grade{font-size:1.4rem;font-weight:700;margin:10px 0}
+.result-stars{font-size:2rem;margin:10px 0}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.rstat{background:var(--bg3);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.rstat-n{font-size:1.6rem;font-weight:800}
+.rstat-l{font-size:.78rem;color:var(--text2);margin-top:4px}
+.fc-container{perspective:1400px;cursor:pointer;margin-bottom:0}
+.fc-inner{
+  position:relative;min-height:280px;
+  transition:transform .6s cubic-bezier(.4,0,.2,1);
+  transform-style:preserve-3d;
+}
+.fc-container.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-face{
+  position:absolute;width:100%;min-height:280px;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:var(--radius);padding:36px 30px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+}
+.fc-front{background:linear-gradient(135deg,#0d1b45,#1a2456);border:1.5px solid rgba(0,124,240,.3)}
+.fc-back{background:linear-gradient(135deg,#0a2d1a,#1a4530);border:1.5px solid rgba(0,200,150,.3);transform:rotateY(180deg)}
+.fc-icon{font-size:3rem;margin-bottom:16px}
+.fc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;opacity:.6;margin-bottom:10px}
+.fc-text{font-size:1.25rem;font-weight:700;line-height:1.5}
+.fc-sub{font-size:.88rem;opacity:.75;margin-top:8px;line-height:1.6}
+.fc-hint{font-size:.78rem;color:var(--text2);margin-top:10px;opacity:.7}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:20px}
+.fc-nav .btn{min-width:100px}
+.fc-counter{font-size:.9rem;color:var(--text2);font-weight:600}
+.fc-progress{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:12px}
+.fc-progress-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));transition:width .4s ease}
+.fc-memory-btns{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.fc-memory-btns .btn{flex:1;max-width:120px;font-size:.82rem}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;text-align:center;
+  transition:var(--transition);
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-n{font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-lbl{font-size:.8rem;color:var(--text2);margin-top:4px;font-weight:600}
+.topic-grid-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.topic-card{
+  background:var(--bg3);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:16px;text-align:center;
+  cursor:pointer;transition:var(--transition);
+}
+.topic-card:hover{border-color:var(--c1);background:rgba(0,200,150,.08);transform:translateY(-2px)}
+.topic-card.sel{border-color:var(--c1);background:rgba(0,200,150,.12)}
+.topic-card .tc-icon{font-size:2rem;margin-bottom:8px}
+.topic-card .tc-name{font-size:.82rem;font-weight:700;line-height:1.3}
+.topic-card .tc-grade{font-size:.72rem;color:var(--text2);margin-top:4px}
+.export-bar{display:flex;gap:10px;flex-wrap:wrap;padding:16px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)}
+@media(max-width:640px){
+  .main-content{padding:16px 12px}
+  .form-row.cols-2,.form-row.cols-3{grid-template-columns:1fr}
+  .result-stats{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .quiz-header{flex-direction:column;align-items:flex-start}
+  .fc-text{font-size:1.05rem}
+  .modal{max-height:100vh;border-radius:var(--radius) var(--radius) 0 0}
+  .modal-overlay{align-items:flex-end;padding:0}
+  .apikey-item{flex-direction:column;align-items:stretch}
+  .apikey-provider{width:100%}
+}
+@media(max-width:480px){
+  .logo small,.logo span{font-size:1.1rem}
+  .nav-tab{padding:12px 14px;font-size:.8rem}
+}
+.hidden{display:none!important}
+.text-center{text-align:center}
+.text-muted{color:var(--text2)}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mt-16{margin-top:16px}
+.mt-20{margin-top:20px}
+.flex-row{display:flex;align-items:center;gap:10px}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mono{font-family:monospace}
+code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:.85em;font-family:monospace}
+.source-status-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.fc-flip-hint{
+  text-align:center;color:var(--text2);font-size:.8rem;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+</style>
+</head>
+<body>
+<div class="app-wrap">
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-icon">🎓</div>
+    <div>
+      <span>SkillupEdu AI</span>
+      <small>Trợ lý học tập thông minh</small>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-icon" id="soundToggle" title="Âm thanh" onclick="toggleSound()">🔊</button>
+    <button class="btn btn-sm btn-secondary" id="btnOpenSettings" onclick="openSettings()">⚙️ Cài đặt</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-tabs" id="navTabs">
+  <button class="nav-tab active" data-tab="tabHome" onclick="switchTab(this,'tabHome')">🏠 Trang chủ</button>
+  <button class="nav-tab" data-tab="tabQuiz" onclick="switchTab(this,'tabQuiz')">📝 Trắc nghiệm</button>
+  <button class="nav-tab" data-tab="tabFlash" onclick="switchTab(this,'tabFlash')">🎴 Flashcard</button>
+  <button class="nav-tab" data-tab="tabTopics" onclick="switchTab(this,'tabTopics')">📚 Chủ đề</button>
+  <button class="nav-tab" data-tab="tabStats" onclick="switchTab(this,'tabStats')">📊 Thống kê</button>
+</nav>
+
+<!-- MAIN -->
+<main class="main-content">
+
+<!-- HOME -->
+<div class="panel active" id="tabHome">
+  <div style="text-align:center;padding:30px 0 20px">
+    <div style="font-size:3.5rem;margin-bottom:14px">🎓</div>
+    <h1 style="font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent">SkillupEdu AI Learning</h1>
+    <p style="color:var(--text2);margin-top:8px;font-size:.95rem">Ôn tập thông minh · Flashcard siêu trí nhớ · Hỗ trợ đa AI Provider</p>
+  </div>
+  <div class="stat-grid" id="homeStats"></div>
+  <div class="sec-title">🚀 Bắt đầu nhanh</div>
+  <div class="topic-grid-wrap" id="quickTopics"></div>
+  <div class="divider"></div>
+  <div class="sec-title">🤖 AI Provider đang dùng</div>
+  <div id="homeProviderInfo" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px"></div>
+</div>
+
+<!-- QUIZ -->
+<div class="panel" id="tabQuiz">
+  <div id="quizConfig">
+    <div class="card">
+      <div class="card-header"><div class="card-title">📝 Cấu hình bài trắc nghiệm</div></div>
+      <div class="form-row cols-3">
+        <div class="fgroup"><label>Môn học</label>
+          <select id="qSubject">
+            <option value="Toán">Toán</option>
+            <option value="Toán Tư Duy">Toán Tư Duy (TA)</option>
+            <option value="Tiếng Việt">Tiếng Việt</option>
+            <option value="Tiếng Anh">Tiếng Anh</option>
+            <option value="Khoa học">Khoa học</option>
+            <option value="Lịch sử">Lịch sử</option>
+            <option value="Địa lý">Địa lý</option>
+            <option value="Đạo đức">Đạo đức</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Lớp</label>
+          <select id="qGrade">
+            <option value="1">Lớp 1</option><option value="2" selected>Lớp 2</option>
+            <option value="3">Lớp 3</option><option value="4">Lớp 4</option>
+            <option value="5">Lớp 5</option><option value="6">Lớp 6</option>
+            <option value="7">Lớp 7</option><option value="8">Lớp 8</option>
+            <option value="9">Lớp 9</option><option value="10">Lớp 10</option>
+            <option value="11">Lớp 11</option><option value="12">Lớp 12</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Số câu hỏi</label>
+          <select id="qCount">
+            <option value="5">5 câu</option><option value="10" selected>10 câu</option>
+            <option value="15">15 câu</option><option value="20">20 câu</option>
+            <option value="30">30 câu</option><option value="50">50 câu</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgroup" style="margin-bottom:16px"><label>Chủ đề / Nội dung ôn tập</label>
+        <textarea id="qTopic" placeholder="VD: Các số tròn trăm, tròn chục lớp 2; bảng nhân 3; từ vựng động vật Tiếng Anh..."></textarea>
+      </div>
+
+      <!-- Source Picker -->
+      <div style="margin-bottom:16px">
+        <label style="font-size:.82rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:10px">Nguồn dữ liệu AI</label>
+        <div class="source-tabs">
+          <div class="source-tab active" data-src="ai" onclick="switchSource(this,'ai')">🤖 AI Tự sinh</div>
+          <div class="source-tab" data-src="web" onclick="switchSource(this,'web')">🌐 Tìm Web</div>
+          <div class="source-tab" data-src="url" onclick="switchSource(this,'url')">🔗 URL</div>
+          <div class="source-tab" data-src="file" onclick="switchSource(this,'file')">📁 File</div>
+          <div class="source-tab" data-src="paste" onclick="switchSource(this,'paste')">📋 Dán text</div>
+        </div>
+        <div class="source-panel active" id="src-ai">
+          <div class="alert alert-info">🤖 AI sẽ tự động tạo nội dung dựa trên chủ đề và lớp bạn chọn, không cần nguồn ngoài.</div>
+        </div>
+        <div class="source-panel" id="src-web">
+          <div class="alert alert-info">🌐 AI sẽ tự động tìm kiếm nội dung trên Internet (qua Google Search) để tạo câu hỏi chính xác hơn. Chỉ cần nhập chủ đề và nhấn nút bên dưới.</div>
+          <button class="btn btn-primary btn-sm" onclick="doWebSearch()" id="btnWebSearch">🔍 Tìm kiếm từ Internet</button>
+          <div id="webSearchPreview" style="margin-top:12px"></div>
+        </div>
+        <div class="source-panel" id="src-url">
+          <div class="url-list" id="urlList">
+            <div class="url-item">
+              <input type="url" style="background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);width:100%;font-family:var(--font)" placeholder="https://...">
+              <button class="btn btn-secondary btn-sm" onclick="addUrlField()">+</button>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm mt-8" onclick="fetchUrls()" id="btnFetchUrls">📥 Tải nội dung URL</button>
+          <div id="urlPreview"></div>
+        </div>
+        <div class="source-panel" id="src-file">
+          <div class="file-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <div class="drop-icon">📂</div>
+            <p>Kéo thả hoặc click để chọn file</p>
+            <p style="font-size:.78rem;margin-top:6px;opacity:.6">TXT · MD · CSV (PDF/DOCX chưa hỗ trợ đọc trên trình duyệt)</p>
+            <input type="file" id="fileInput" accept=".txt,.md,.csv" multiple style="display:none" onchange="handleFiles(event)">
+          </div>
+          <div class="file-items" id="fileItems"></div>
+        </div>
+        <div class="source-panel" id="src-paste">
+          <div class="fgroup"><label>Dán nội dung tài liệu</label>
+            <textarea id="pasteContent" style="min-height:140px" placeholder="Dán nội dung sách giáo khoa, bài học, ghi chú... AI sẽ tạo câu hỏi từ nội dung này"></textarea>
+          </div>
+        </div>
+        <div id="sourceContext" style="display:none">
+          <div class="source-result-preview" id="sourceContextText"></div>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="form-row cols-2" style="margin-bottom:14px">
+        <div class="fgroup"><label>⏱️ Thời gian làm bài</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="qTimer" onchange="toggleCustomTimer(this)">
+              <option value="0">Không giới hạn</option>
+              <option value="5">5 phút</option>
+              <option value="10" selected>10 phút</option>
+              <option value="15">15 phút</option>
+              <option value="20">20 phút</option>
+              <option value="30">30 phút</option>
+              <option value="45">45 phút</option>
+              <option value="60">60 phút</option>
+              <option value="custom">⏱️ Tùy chỉnh...</option>
+            </select>
+            <div id="customTimerWrap" style="display:none;align-items:center;gap:6px">
+              <input type="number" id="qTimerCustom" min="1" max="180" value="25"
+                style="width:70px;background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px;color:var(--text);text-align:center;font-size:1rem;font-weight:700">
+              <span style="color:var(--text2);font-size:.85rem">phút</span>
+            </div>
+          </div>
+        </div>
+        <div class="fgroup"><label>Cách hiện đáp án</label>
+          <select id="qAnswerMode">
+            <option value="each">Sau mỗi câu</option>
+            <option value="end">Sau khi hoàn thành</option>
+            <option value="none">Không hiện (luyện thi)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-row" style="flex-wrap:wrap;gap:14px;margin-bottom:18px">
+        <label class="toggle-wrap" onclick="toggleToggle('tRandom')">
+          <div class="toggle on" id="tRandom"></div>
+          <span class="toggle-label">Xáo trộn câu hỏi</span>
+        </label>
+        <label class="toggle-wrap" onclick="toggleToggle('tShuffleOpts')">
+          <div class="toggle on" id="tShuffleOpts"></div>
+          <span class="toggle-label">Xáo trộn đáp án</span>
+        </label>
+        <label class="toggle-wrap" onclick="toggleToggle('tEmoji')">
+          <div class="toggle on" id="tEmoji"></div>
+          <span class="toggle-label">Emoji câu hỏi</span>
+        </label>
+        <label class="toggle-wrap" onclick="toggleToggle('tExplain')">
+          <div class="toggle on" id="tExplain"></div>
+          <span class="toggle-label">Hiện giải thích</span>
+        </label>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary" id="btnStartQuiz" onclick="startQuiz()">🚀 Tạo bài trắc nghiệm</button>
+        <button class="btn btn-secondary" onclick="previewPrompt()">👁️ Xem Prompt</button>
+      </div>
+      <div id="quizLoadingArea" style="margin-top:16px"></div>
+    </div>
+  </div>
+
+  <!-- Quiz Play -->
+  <div id="quizPlay" class="hidden">
+    <div class="quiz-header">
+      <div>
+        <div style="font-size:1.1rem;font-weight:700">📝 Bài trắc nghiệm</div>
+        <div class="quiz-meta" id="qMeta"></div>
+      </div>
+      <div class="timer-wrap">
+        <span>⏱️</span>
+        <div class="timer-display" id="timerDisplay">∞</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="quiz-progress-label" id="qProgressLabel"></span>
+        <button class="btn btn-sm btn-danger" onclick="endQuizEarly()">⏹️ Kết thúc</button>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="qProgressFill" style="width:0"></div></div>
+    <div id="questionArea"></div>
+  </div>
+
+  <!-- Quiz Result -->
+  <div id="quizResult" class="hidden"></div>
+</div>
+
+<!-- FLASHCARD -->
+<div class="panel" id="tabFlash">
+  <div id="flashConfig">
+    <div class="card">
+      <div class="card-header"><div class="card-title">🎴 Tạo Flashcard AI</div></div>
+      <div class="form-row cols-3">
+        <div class="fgroup"><label>Môn học</label>
+          <select id="fcSubject">
+            <option value="Toán">Toán</option>
+            <option value="Tiếng Việt">Tiếng Việt</option>
+            <option value="Tiếng Anh">Tiếng Anh</option>
+            <option value="Khoa học">Khoa học</option>
+            <option value="Lịch sử">Lịch sử</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Lớp</label>
+          <select id="fcGrade">
+            <option value="1">Lớp 1</option><option value="2" selected>Lớp 2</option>
+            <option value="3">Lớp 3</option><option value="4">Lớp 4</option>
+            <option value="5">Lớp 5</option><option value="6">Lớp 6</option>
+            <option value="7">Lớp 7</option><option value="8">Lớp 8</option>
+            <option value="9">Lớp 9</option><option value="10">Lớp 10</option>
+            <option value="11">Lớp 11</option><option value="12">Lớp 12</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Số thẻ</label>
+          <select id="fcCount">
+            <option value="5">5 thẻ</option><option value="10" selected>10 thẻ</option>
+            <option value="15">15 thẻ</option><option value="20">20 thẻ</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols-2">
+        <div class="fgroup"><label>Kiểu thẻ</label>
+          <select id="fcType">
+            <option value="qa">Câu hỏi - Trả lời</option>
+            <option value="vocab">Từ vựng - Nghĩa</option>
+            <option value="formula">Công thức - Ví dụ</option>
+            <option value="translate">Từ - Dịch</option>
+            <option value="fill">Điền vào chỗ trống</option>
+          </select>
+        </div>
+        <div class="fgroup"><label>Màu thẻ</label>
+          <select id="fcColor">
+            <option value="blue">🔵 Xanh dương</option>
+            <option value="green">🟢 Xanh lá</option>
+            <option value="purple">🟣 Tím</option>
+            <option value="orange">🟠 Cam</option>
+            <option value="pink">🩷 Hồng</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgroup" style="margin-bottom:18px"><label>Chủ đề Flashcard</label>
+        <textarea id="fcTopic" placeholder="VD: Bảng nhân 2-5; Từ vựng động vật; Công thức hình học..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="startFlashcards()">🎴 Tạo Flashcard AI</button>
+      <div id="flashLoadingArea" style="margin-top:16px"></div>
+    </div>
+  </div>
+
+  <!-- Flash Play -->
+  <div id="flashPlay" class="hidden">
+    <div class="card" style="padding:16px 20px">
+      <div class="flex-between">
+        <button class="btn btn-secondary btn-sm" onclick="backToFlashConfig()">← Quay lại</button>
+        <div class="flex-row">
+          <button class="btn btn-secondary btn-sm" onclick="shuffleFlash()">🔀 Xáo</button>
+          <button class="btn btn-secondary btn-sm" onclick="resetFlash()">🔄 Reset</button>
+        </div>
+      </div>
+    </div>
+    <div class="fc-container" id="fcCard" onclick="flipCard()">
+      <div class="fc-inner">
+        <div class="fc-face fc-front" id="fcFront">
+          <span class="fc-icon" id="fcIcon">❓</span>
+          <div class="fc-label">CÂU HỎI</div>
+          <div class="fc-text" id="fcFrontText"></div>
+          <div class="fc-sub" id="fcFrontSub"></div>
+        </div>
+        <div class="fc-face fc-back" id="fcBack">
+          <span class="fc-icon">✅</span>
+          <div class="fc-label">TRẢ LỜI</div>
+          <div class="fc-text" id="fcBackText"></div>
+          <div class="fc-sub" id="fcBackSub"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-flip-hint">👆 Click thẻ để lật</div>
+    <div class="fc-nav">
+      <button class="btn btn-secondary" id="fcPrev" onclick="fcNav(-1)">← Trước</button>
+      <span class="fc-counter" id="fcCounter">1 / 10</span>
+      <button class="btn btn-secondary" id="fcNext" onclick="fcNav(1)">Sau →</button>
+    </div>
+    <div class="fc-progress"><div class="fc-progress-fill" id="fcProgressFill" style="width:10%"></div></div>
+    <div class="fc-memory-btns hidden" id="fcMemBtns">
+      <button class="btn btn-danger btn-sm" onclick="memRate('hard')">😵 Khó</button>
+      <button class="btn btn-secondary btn-sm" onclick="memRate('medium')">🤔 Bình thường</button>
+      <button class="btn btn-primary btn-sm" onclick="memRate('easy')">😊 Dễ</button>
+    </div>
+    <div class="export-bar mt-16">
+      <span style="font-size:.85rem;font-weight:600;color:var(--text2)">📤 Xuất:</span>
+      <button class="btn btn-secondary btn-sm" onclick="exportFlash('md')">📄 Markdown</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportFlash('html')">🌐 HTML</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportFlash('pdf')">🖨️ In/PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOPICS -->
+<div class="panel" id="tabTopics">
+  <div class="sec-title">📚 Chủ đề Lớp 2 - Toán</div>
+  <div class="topic-grid-wrap" id="topics2Toan"></div>
+  <div class="divider"></div>
+  <div class="sec-title">📖 Chủ đề Lớp 2 - Tiếng Việt & Tiếng Anh</div>
+  <div class="topic-grid-wrap" id="topics2VietAnh"></div>
+  <div class="divider"></div>
+  <div class="sec-title">🔢 Chủ đề Lớp 3 - Toán</div>
+  <div class="topic-grid-wrap" id="topics3Toan"></div>
+  <div class="divider"></div>
+  <div class="sec-title">📖 Chủ đề Lớp 3 - Tiếng Việt & Tiếng Anh</div>
+  <div class="topic-grid-wrap" id="topics3VietAnh"></div>
+  <div class="divider"></div>
+  <div id="topicActionBox" style="display:none;background:var(--bg2);border:1px solid var(--c1);border-radius:var(--radius);padding:20px;text-align:center">
+    <div style="font-weight:700;margin-bottom:12px">📌 Đã chọn: <span id="topicChosenName"></span></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="topicGoQuiz()">📝 Làm trắc nghiệm</button>
+      <button class="btn btn-secondary" onclick="topicGoFlash()">🎴 Tạo Flashcard</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="panel" id="tabStats">
+  <div class="sec-title">📊 Tổng quan</div>
+  <div class="stat-grid" id="statsGrid"></div>
+  <div class="sec-title">🏆 Thành tích</div>
+  <div class="card" id="achievementList"></div>
+  <div class="sec-title">📋 Lịch sử làm bài</div>
+  <div class="card" id="historyList"></div>
+  <div style="margin-top:16px;text-align:center">
+    <button class="btn btn-danger btn-sm" onclick="confirmResetStats()">🗑️ Xóa toàn bộ thống kê</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay hidden" id="settingsModal" onclick="closeModalOut(event,'settingsModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⚙️ Cài đặt AI</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('settingsModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgroup" style="margin-bottom:14px"><label>AI Provider</label>
+        <select id="setProvider" onchange="onProviderChange()">
+          <option value="gemini">💎 Google Gemini</option>
+          <option value="openai">🟢 OpenAI</option>
+          <option value="mistral">🌊 Mistral AI</option>
+          <option value="deepseek">🔵 DeepSeek</option>
+          <option value="openrouter">🔀 OpenRouter</option>
+          <option value="grok">⚡ Grok (xAI)</option>
+        </select>
+      </div>
+      <div class="fgroup" style="margin-bottom:14px">
+        <div class="flex-between"><label>Model</label><span id="modelUpdateStatus" style="font-size:.75rem;color:var(--text2)"></span></div>
+        <div style="display:flex;gap:8px">
+          <select id="setModel" style="flex:1"></select>
+          <button class="btn btn-secondary btn-sm" onclick="fetchModels()">🔄</button>
+        </div>
+      </div>
+      <div class="form-row cols-2" style="margin-bottom:14px">
+        <div class="fgroup"><label>Temperature</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <input type="range" id="setTemp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('tempVal').textContent=this.value" style="flex:1">
+            <span id="tempVal" style="font-weight:700;color:var(--c1);min-width:30px;text-align:center">0.7</span>
+          </div>
+        </div>
+        <div class="fgroup"><label>Ngôn ngữ</label>
+          <select id="setLang">
+            <option value="vi">🇻🇳 Tiếng Việt</option>
+            <option value="en">🇬🇧 English</option>
+          </select>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex-between" style="margin-bottom:12px">
+        <div class="sec-title" style="margin-bottom:0">🔑 API Keys</div>
+        <button class="btn btn-primary btn-sm" onclick="addApiKey()">+ Thêm key</button>
+      </div>
+      <div class="apikey-list" id="apikeyList"></div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="testConnection()">🔌 Test tất cả</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('settingsModal')">Hủy</button>
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Lưu cài đặt</button>
+    </div>
+  </div>
+</div>
+
+<!-- Prompt Preview Modal -->
+<div class="modal-overlay hidden" id="promptModal" onclick="closeModalOut(event,'promptModal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👁️ Xem Prompt</div>
+      <button class="btn btn-icon btn-sm" onclick="closeModal('promptModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <pre id="promptPreviewText" style="background:var(--bg4);padding:16px;border-radius:8px;font-size:.82rem;line-height:1.7;white-space:pre-wrap;color:var(--text3);max-height:60vh;overflow-y:auto"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="copyPrompt()">📋 Copy</button>
+      <button class="btn btn-primary" onclick="closeModal('promptModal')">Đóng</button>
+    </div>
+  </div>
+</div>
+<!-- JAVASCRIPT -->
+<script>
+'use strict';
+
+// ══════════════════════════════════════════
+// CONSTANTS — Danh sách AI Provider
+// ══════════════════════════════════════════
+const PROVIDERS = {
+  gemini:{
+    name:'Google Gemini',emoji:'💎',
+    models:[
+      {id:'gemini-2.5-pro-preview-03-25',name:'Gemini 2.5 Pro Preview',tag:'Mạnh nhất'},
+      {id:'gemini-2.0-flash',name:'Gemini 2.0 Flash',tag:'Nhanh'},
+      {id:'gemini-2.0-flash-lite',name:'Gemini 2.0 Flash Lite',tag:'Nhẹ'},
+      {id:'gemini-1.5-pro',name:'Gemini 1.5 Pro',tag:'Pro'},
+      {id:'gemini-1.5-flash',name:'Gemini 1.5 Flash',tag:'Flash'},
+    ],
+    endpoint:(m,k)=>`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${k}`,
+    buildBody:(messages,temp,model)=>{
+      const contents=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
+      const sys=messages.find(m=>m.role==='system');
+      const body={contents,generationConfig:{temperature:parseFloat(temp)||0.7,maxOutputTokens:8192}};
+      if(sys) body.system_instruction={parts:[{text:sys.content}]};
+      return body;
+    },
+    parseResp:r=>r.candidates?.[0]?.content?.parts?.[0]?.text||'',
+  },
+  openai:{
+    name:'OpenAI',emoji:'🟢',
+    models:[
+      {id:'gpt-4o',name:'GPT-4o',tag:'Tốt nhất'},
+      {id:'gpt-4o-mini',name:'GPT-4o Mini',tag:'Nhanh'},
+      {id:'gpt-4-turbo',name:'GPT-4 Turbo',tag:''},
+      {id:'gpt-3.5-turbo',name:'GPT-3.5 Turbo',tag:'Rẻ'},
+    ],
+    endpoint:()=>'https://api.openai.com/v1/chat/completions',
+    buildBody:(messages,temp,model)=>({model:model,messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}),
+    parseResp:r=>r.choices?.[0]?.message?.content||'',
+    authHeader:k=>({'Authorization':`Bearer ${k}`}),
+  },
+  mistral:{
+    name:'Mistral AI',emoji:'🌊',
+    models:[
+      {id:'mistral-large-latest',name:'Mistral Large',tag:'Tốt nhất'},
+      {id:'mistral-medium-latest',name:'Mistral Medium',tag:''},
+      {id:'mistral-small-latest',name:'Mistral Small',tag:'Nhanh'},
+      {id:'open-mixtral-8x22b',name:'Mixtral 8x22B',tag:'Mạnh'},
+    ],
+    endpoint:()=>'https://api.mistral.ai/v1/chat/completions',
+    buildBody:(messages,temp,model)=>({model:model,messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}),
+    parseResp:r=>r.choices?.[0]?.message?.content||'',
+    authHeader:k=>({'Authorization':`Bearer ${k}`}),
+  },
+  deepseek:{
+    name:'DeepSeek',emoji:'🔵',
+    models:[
+      {id:'deepseek-chat',name:'DeepSeek Chat',tag:'V3'},
+      {id:'deepseek-reasoner',name:'DeepSeek Reasoner',tag:'R1'},
+    ],
+    endpoint:()=>'https://api.deepseek.com/v1/chat/completions',
+    buildBody:(messages,temp,model)=>({model:model,messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}),
+    parseResp:r=>r.choices?.[0]?.message?.content||'',
+    authHeader:k=>({'Authorization':`Bearer ${k}`}),
+  },
+  openrouter:{
+    name:'OpenRouter',emoji:'🔀',
+    models:[
+      {id:'meta-llama/llama-3.3-70b-instruct:free',name:'Llama 3.3 70B',tag:'🆓 Miễn phí'},
+      {id:'google/gemma-4-26b-a4b-it:free',name:'Gemma 4 26B',tag:'🆓 Google'},
+      {id:'nvidia/nemotron-3-super-120b-a12b:free',name:'Nemotron 120B',tag:'🆓 NVIDIA'},
+      {id:'qwen/qwen3-coder:free',name:'Qwen3 Coder',tag:'🆓 Code'},
+      {id:'openai/gpt-oss-120b:free',name:'GPT-OSS 120B',tag:'🆓 OpenAI'},
+      {id:'google/gemma-3-27b-it:free',name:'Gemma 3 27B',tag:'🆓 Nhẹ'},
+      {id:'openrouter/free',name:'Auto Free Router',tag:'🆓 Auto chọn'},
+    ],
+
+    endpoint:()=>'https://openrouter.ai/api/v1/chat/completions',
+    buildBody:(messages,temp,model)=>({model:model,messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}),
+    parseResp:r=>r.choices?.[0]?.message?.content||'',
+    authHeader:k=>({'Authorization':`Bearer ${k}`,'HTTP-Referer':'https://vioedu.app','X-Title':'SkillupEdu AI'}),
+  },
+  groq:{
+    name:'Groq (Miễn phí)',emoji:'⚡',
+    models:[
+      {id:'llama-3.3-70b-versatile',name:'Llama 3.3 70B',tag:'🏆 Mạnh+Nhanh'},
+      {id:'meta-llama/llama-4-scout-17b-16e-instruct',name:'Llama 4 Scout 17B',tag:'Mới nhất'},
+      {id:'qwen/qwen3-32b',name:'Qwen3 32B',tag:'Tốt'},
+      {id:'llama-3.1-8b-instant',name:'Llama 3.1 8B',tag:'⚡ Siêu nhanh'},
+    ],
+    endpoint:()=>'https://api.groq.com/openai/v1/chat/completions',
+    buildBody:(messages,temp,model)=>({model:model||'llama-3.3-70b-versatile',messages,temperature:parseFloat(temp)||0.7,max_tokens:4096}),
+    parseResp:r=>r.choices?.[0]?.message?.content||'',
+    authHeader:k=>({'Authorization':`Bearer ${k}`}),
+  },
+
+};
+
+const TOPIC_DATA = {
+  k2_toan:[
+    {icon:'🔢',name:'Số tròn trăm, tròn chục',grade:'2',sub:'Toán'},
+    {icon:'💯',name:'So sánh số tròn trăm',grade:'2',sub:'Toán'},
+    {icon:'🔣',name:'Các số có ba chữ số',grade:'2',sub:'Toán'},
+    {icon:'📊',name:'So sánh số có ba chữ số',grade:'2',sub:'Toán'},
+    {icon:'⚙️',name:'Cấu tạo số ba chữ số',grade:'2',sub:'Toán'},
+    {icon:'📏',name:'Đề-xi-mét',grade:'2',sub:'Toán'},
+    {icon:'🔷',name:'Hình tứ giác',grade:'2',sub:'Toán'},
+    {icon:'📦',name:'Ôn tập về hình khối',grade:'2',sub:'Toán'},
+    {icon:'📐',name:'Mét',grade:'2',sub:'Toán'},
+    {icon:'📅',name:'Ngày, tháng xem lịch',grade:'2',sub:'Toán'},
+    {icon:'🕐',name:'Bài toán về thời gian',grade:'2',sub:'Toán'},
+    {icon:'➕',name:'Phép cộng, trừ trong 100',grade:'2',sub:'Toán'},
+    {icon:'✖️',name:'Phép nhân',grade:'2',sub:'Toán'},
+    {icon:'➗',name:'Thành phần phép chia',grade:'2',sub:'Toán'},
+  ],
+  k2_viet_anh:[
+    {icon:'🗣️',name:'Phân biệt l/n, s/x, iu/ưu...',grade:'2',sub:'Tiếng Việt'},
+    {icon:'📖',name:'Tập đọc: Cộng đồng - Xã hội',grade:'2',sub:'Tiếng Việt'},
+    {icon:'🌿',name:'Tập đọc: Thiên nhiên',grade:'2',sub:'Tiếng Việt'},
+    {icon:'🔤',name:'Từ chỉ sự vật & hoạt động',grade:'2',sub:'Tiếng Việt'},
+    {icon:'❓',name:'Đặt và trả lời "Khi nào?"',grade:'2',sub:'Tiếng Việt'},
+    {icon:'🦁',name:'Animals: zoo, zebra...',grade:'2',sub:'Tiếng Anh'},
+    {icon:'🚗',name:"They're driving cars",grade:'2',sub:'Tiếng Anh'},
+    {icon:'🎂',name:'The cake IS on the table',grade:'2',sub:'Tiếng Anh'},
+    {icon:'🔢',name:'Numbers 11-15',grade:'2',sub:'Tiếng Anh'},
+    {icon:'👶',name:'How old is your brother?',grade:'2',sub:'Tiếng Anh'},
+    {icon:'📣',name:'Phonics: li, Aa, Nn, er',grade:'2',sub:'Tiếng Anh'},
+  ],
+  k3_toan:[
+    {icon:'🔢',name:'Số có 5 chữ số, Số 100 000',grade:'3',sub:'Toán'},
+    {icon:'📊',name:'So sánh số trong phạm vi 100k',grade:'3',sub:'Toán'},
+    {icon:'➕',name:'Phép cộng phạm vi 10 000',grade:'3',sub:'Toán'},
+    {icon:'➖',name:'Phép trừ phạm vi 10 000',grade:'3',sub:'Toán'},
+    {icon:'🔍',name:'Tìm thành phần phép tính',grade:'3',sub:'Toán'},
+    {icon:'⚖️',name:'Điểm ở giữa, trung điểm',grade:'3',sub:'Toán'},
+    {icon:'⭕',name:'Tâm, bán kính, đường kính hình tròn',grade:'3',sub:'Toán'},
+    {icon:'🔢',name:'Numbers up to 10,000',grade:'3',sub:'Toán TA'},
+    {icon:'📍',name:'Place value up to 10,000',grade:'3',sub:'Toán TA'},
+    {icon:'🎯',name:'Rounding to Nearest Ten & Hundred',grade:'3',sub:'Toán TA'},
+    {icon:'💡',name:'Mixed operation word problems',grade:'3',sub:'Toán TA'},
+  ],
+  k3_viet_anh:[
+    {icon:'📚',name:'Đọc hiểu, mở rộng vốn từ',grade:'3',sub:'Tiếng Việt'},
+    {icon:'🔤',name:'Từ đồng nghĩa / trái nghĩa',grade:'3',sub:'Tiếng Việt'},
+    {icon:'⚖️',name:'Biện pháp so sánh',grade:'3',sub:'Tiếng Việt'},
+    {icon:'✍️',name:'Chính tả: phân biệt vần',grade:'3',sub:'Tiếng Việt'},
+    {icon:'📝',name:'Viết đoạn văn ngắn',grade:'3',sub:'Tiếng Việt'},
+    {icon:'🎮',name:'Break time activities',grade:'3',sub:'Tiếng Anh'},
+    {icon:'👨‍👩‍👧‍👦',name:'Family members',grade:'3',sub:'Tiếng Anh'},
+    {icon:'💼',name:"Someone's job",grade:'3',sub:'Tiếng Anh'},
+    {icon:'🏠',name:'House rooms & furniture',grade:'3',sub:'Tiếng Anh'},
+    {icon:'🍎',name:'Food and drinks',grade:'3',sub:'Tiếng Anh'},
+    {icon:'🐶',name:'Pets vocabulary',grade:'3',sub:'Tiếng Anh'},
+    {icon:'📣',name:'Phonics: /f/v/ /əʊ/ /ɑː/ /e/',grade:'3',sub:'Tiếng Anh'},
+  ]
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let ST = {
+  provider:'gemini', model:'gemini-2.0-flash',
+  apiKeys:[], currentKeyIdx:0,
+  temp:'0.7', lang:'vi', soundEnabled:true,
+  sourceType:'ai', sourceContext:'',
+  quiz:null, flash:null, timerInterval:null,
+  fcIndex:0, fcFlipped:false,
+  stats:{ totalQ:0, correctQ:0, sessions:0, fcLearned:0, history:[], achievements:[] }
+};
+
+// ══════════════════════════════════════════
+// PERSIST — Lưu/tải dữ liệu localStorage
+// ══════════════════════════════════════════
+function saveAll(){
+  try{
+    const s={...ST};
+    s.apiKeys=s.apiKeys.map(k=>({...k,key:btoa(k.key||'')}));
+    delete s.quiz; delete s.flash; delete s.timerInterval;
+    localStorage.setItem('skillupEdu_v4',JSON.stringify(s));
+  }catch(e){}
+}
+function loadAll(){
+  try{
+    const raw=localStorage.getItem('skillupEdu_v4');
+    if(!raw)return;
+    const s=JSON.parse(raw);
+    s.apiKeys=(s.apiKeys||[]).map(k=>({...k,key:atob(k.key||'')}));
+    Object.assign(ST,s);
+    ST.quiz=null; ST.flash=null; ST.timerInterval=null;
+  }catch(e){}
+}
+
+// ══════════════════════════════════════════
+// AUDIO ENGINE — Âm thanh vui nhộn cho trẻ em
+// ══════════════════════════════════════════
+var AC=null;
+function getAC(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function playTone(freq,dur,type,vol,delay){
+  if(typeof freq==='undefined')freq=520;if(typeof dur==='undefined')dur=0.12;
+  if(typeof type==='undefined')type='sine';if(typeof vol==='undefined')vol=0.18;
+  if(typeof delay==='undefined')delay=0;
+  var ac=getAC();if(!ac||!ST.soundEnabled)return;
+  var t=ac.currentTime+delay;
+  var o=ac.createOscillator();var g=ac.createGain();
+  o.connect(g);g.connect(ac.destination);
+  o.type=type;o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(0,t);
+  g.gain.linearRampToValueAtTime(vol,t+0.01);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  o.start(t);o.stop(t+dur+0.05);
+}
+
+const SFX={
+  click:()=>{playTone(800,.05,'sine',.10);playTone(1000,.04,'sine',.08,.03)},
+  correct:()=>{playTone(523,.12,'sine',.15);playTone(659,.12,'sine',.15,.1);playTone(784,.2,'sine',.18,.2);playTone(1568,.08,'sine',.06,.3)},
+  wrong:()=>{playTone(300,.15,'triangle',.1);playTone(250,.2,'triangle',.08,.12)},
+  flip:()=>{playTone(400,.04,'sine',.08);playTone(800,.06,'sine',.1,.03);playTone(1200,.04,'sine',.06,.06)},
+  complete:()=>{[523,587,659,698,784,880,988,1047].forEach((f,i)=>playTone(f,.12,'sine',.13,i*0.08))},
+  timerWarn:()=>{playTone(600,.05,'sine',.08);playTone(500,.05,'sine',.08,.15)},
+  timerDanger:()=>{playTone(880,.06,'triangle',.12);playTone(880,.06,'triangle',.12,.12);playTone(1100,.08,'triangle',.14,.24)},
+  start:()=>{playTone(392,.1,'sine',.12);playTone(523,.1,'sine',.14,.1);playTone(659,.15,'sine',.16,.2)},
+  nav:()=>{playTone(800,.04,'sine',.08);playTone(1000,.04,'sine',.06,.04)},
+  save:()=>{playTone(660,.08,'sine',.10);playTone(880,.1,'sine',.12,.08);playTone(1100,.06,'sine',.08,.16)},
+};
+function toggleSound(){
+  ST.soundEnabled=!ST.soundEnabled;
+  document.getElementById('soundToggle').textContent=ST.soundEnabled?'🔊':'🔇';
+  saveAll(); if(ST.soundEnabled)SFX.click();
+}
+
+// ══════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════
+function switchTab(btn,tabId){
+  SFX.nav();
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+  if(tabId==='tabStats')renderStats();
+  if(tabId==='tabHome')renderHome();
+}
+function openModal(id){document.getElementById(id).classList.remove('hidden');SFX.click()}
+function closeModal(id){document.getElementById(id).classList.add('hidden')}
+function closeModalOut(e,id){if(e.target.id===id)closeModal(id)}
+function toast(title,msg,type,dur){
+  if(typeof type==='undefined')type='info';
+  if(typeof dur==='undefined')dur=3500;
+  SFX.click();
+  var container=document.getElementById('toast-container');
+  while(container.children.length>=5){container.firstChild.remove()}
+  var icons={info:'💬',success:'✅',error:'❌',warn:'⚠️'};
+  var el=document.createElement('div');el.className='toast';
+  el.innerHTML='<span class="toast-icon">'+(icons[type]||'💬')+'</span><div class="toast-content"><div class="toast-title">'+title+'</div>'+(msg?'<div class="toast-msg">'+msg+'</div>':'')+'</div>';
+  container.appendChild(el);
+  setTimeout(function(){el.classList.add('hide');setTimeout(function(){el.remove()},350)},dur);
+}
+function toggleToggle(id){const el=document.getElementById(id);if(!el)return;el.classList.toggle('on');SFX.click()}
+function isOn(id){return document.getElementById(id)?.classList.contains('on')}
+function togglePwd(inputId,btn){
+  const inp=document.getElementById(inputId); if(!inp)return;
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁️';}
+}
+function switchSource(el,src){
+  document.querySelectorAll('.source-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.source-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('src-'+src).classList.add('active');
+  ST.sourceType=src; SFX.click();
+}
+function addUrlField(){
+  const list=document.getElementById('urlList');
+  const div=document.createElement('div'); div.className='url-item';
+  div.innerHTML=`<input type="url" style="background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);width:100%;font-family:var(--font)" placeholder="https://...">
+  <button class="btn btn-secondary btn-sm" onclick="this.parentElement.remove()">✕</button>`;
+  list.appendChild(div); SFX.click();
+}
+function toggleCustomTimer(sel){
+  document.getElementById('customTimerWrap').style.display=sel.value==='custom'?'flex':'none';
+}
+
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+function onProviderChange(){renderModelSelect(document.getElementById('setProvider').value)}
+function renderModelSelect(prov){
+  const sel=document.getElementById('setModel'); sel.innerHTML='';
+  (PROVIDERS[prov]||PROVIDERS.gemini).models.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.id; o.textContent=m.name+(m.tag?` [${m.tag}]`:'');
+    if(m.id===ST.model)o.selected=true; sel.appendChild(o);
+  });
+}
+function renderApiKeyList(){
+  const list=document.getElementById('apikeyList'); list.innerHTML='';
+  if(!ST.apiKeys.length){list.innerHTML='<div class="alert alert-warn">⚠️ Chưa có API key nào. Hãy thêm để bắt đầu dùng AI.</div>';return;}
+  ST.apiKeys.forEach((k,i)=>{
+    const div=document.createElement('div');
+    div.className='apikey-item'+(i===ST.currentKeyIdx?' active-key':'');
+    div.innerHTML=`
+      <select class="apikey-provider" onchange="ST.apiKeys[${i}].provider=this.value;saveAll()">
+        ${Object.keys(PROVIDERS).map(p=>`<option value="${p}"${p===k.provider?' selected':''}>${PROVIDERS[p].emoji} ${PROVIDERS[p].name}</option>`).join('')}
+      </select>
+      <div class="apikey-input-wrap" style="flex:1">
+        <input type="password" class="apikey-field" id="apikey_field_${i}" value="${k.key}" placeholder="Nhập API key..."
+          onchange="ST.apiKeys[${i}].key=this.value;saveAll()">
+        <button class="apikey-eye" onclick="togglePwd('apikey_field_${i}',this)">👁️</button>
+      </div>
+      <div class="fgroup" style="width:140px;min-width:80px">
+        <input type="text" style="background:var(--bg4);border:1px solid var(--border);border-radius:6px;padding:8px;color:var(--text);font-size:.8rem;width:100%"
+          value="${k.label||''}" placeholder="Ghi chú" onchange="ST.apiKeys[${i}].label=this.value;saveAll()">
+      </div>
+      <div class="apikey-status ${k.status||'idle'}" title="${k.status==='ok'?'OK':k.status==='fail'?'Lỗi':'Chưa test'}"></div>
+      <button class="btn btn-icon btn-sm" onclick="testKey(${i})">🔌</button>
+      <button class="btn btn-icon btn-sm" style="color:var(--c4)" onclick="removeApiKey(${i})">🗑️</button>`;
+    list.appendChild(div);
+  });
+}
+function addApiKey(){
+  ST.apiKeys.push({provider:document.getElementById('setProvider').value,key:'',status:'idle',label:'',quota:''});
+  renderApiKeyList(); saveAll(); SFX.click();
+}
+function removeApiKey(i){
+  ST.apiKeys.splice(i,1);
+  if(ST.currentKeyIdx>=ST.apiKeys.length)ST.currentKeyIdx=0;
+  renderApiKeyList(); saveAll(); SFX.click();
+}
+
+// ═══ FIX #1: testKey — Dùng model đúng cho từng provider ═══
+async function testKey(i){
+  const k=ST.apiKeys[i];
+  if(!k||!k.key.trim()){toast('Lỗi','Chưa nhập API key!','error');return;}
+  toast('Đang test...','Vui lòng chờ','info',2000);
+  try{
+    const prov=PROVIDERS[k.provider];
+    let ok=false;
+    if(k.provider==='gemini'){
+      // Test Gemini: chỉ dùng key của Gemini, gọi list models
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${k.key}`);
+      ok=r.ok;
+      if(r.ok){
+        try{
+          const d=await r.json();
+          const cnt=(d.models||[]).filter(m=>m.name.includes('gemini')).length;
+          ST.apiKeys[i].quota=`${cnt} models`;
+        }catch(e){}
+      }
+    }else{
+      // Test provider khác: dùng model RẺ NHẤT + max_tokens NHỎ NHẤT
+      const cheapModel=prov.models[prov.models.length-1]?.id||prov.models[0]?.id;
+      const ep=prov.endpoint(cheapModel,k.key);
+      const testBody=prov.buildBody([{role:'user',content:'hi'}],'0.1',cheapModel);
+      testBody.max_tokens=3; // Rất nhỏ để tiết kiệm
+      const headers={'Content-Type':'application/json'};
+      if(prov.authHeader)Object.assign(headers,prov.authHeader(k.key));
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),15000); // 15s timeout
+      try{
+        const r=await fetch(ep,{method:'POST',headers,body:JSON.stringify(testBody),signal:controller.signal});
+        clearTimeout(timeout);
+        if(r.ok){ok=true}
+        else if(r.status===401||r.status===403){ok=false}
+        else if(r.status===402){ok=true;ST.apiKeys[i].quota='⚠️ Ít credit'}
+        else if(r.status===429){ok=true;ST.apiKeys[i].quota='⚠️ Rate limited'}
+        else{ok=false}
+      }catch(fetchErr){
+        clearTimeout(timeout);
+        if(fetchErr.name==='AbortError'){
+          ST.apiKeys[i].status='fail';ST.apiKeys[i].quota='⏱️ Timeout';
+          toast('⏱️ Timeout',`${prov.name} không phản hồi (15s)`,'warn');
+          renderApiKeyList();saveAll();return;
+        }
+        throw fetchErr;
+      }
+    }
+    ST.apiKeys[i].status=ok?'ok':'fail';
+    if(ok)toast('✅ Thành công',`Key "${k.label||prov.name}" hoạt động!`,'success');
+    else toast('❌ Thất bại','Key không hợp lệ','error');
+  }catch(e){
+    ST.apiKeys[i].status='fail';
+    ST.apiKeys[i].quota='❌ Lỗi kết nối';
+    toast('❌ Lỗi',e.message.slice(0,100),'error');
+  }
+  renderApiKeyList();saveAll();
+}
+async function testConnection(){
+  const v=ST.apiKeys.filter(k=>k.key.trim());
+  if(!v.length){toast('Lỗi','Chưa có API key!','error');return;}
+  for(let i=0;i<ST.apiKeys.length;i++){if(ST.apiKeys[i].key.trim())await testKey(i)}
+}
+async function fetchModels(){
+  const statusEl=document.getElementById('modelUpdateStatus');
+  statusEl.textContent='⏳ Đang tìm models mới nhất...';
+  const prov=document.getElementById('setProvider').value;
+  const key=ST.apiKeys.find(k=>k.provider===prov&&k.key.trim())?.key;
+
+  if(prov==='gemini'&&key){
+    try{
+      const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+      if(r.ok){
+        const d=await r.json();
+        const models=(d.models||[])
+          .filter(m=>m.name.includes('gemini')&&m.supportedGenerationMethods?.includes('generateContent'))
+          .map(m=>{
+            const id=m.name.replace('models/','');
+            const name=m.displayName||id;
+            let tag='';
+            if(id.includes('2.5-pro'))tag='🏆 Mạnh nhất';
+            else if(id.includes('2.5-flash'))tag='⚡ Nhanh+Rẻ';
+            else if(id.includes('2.0-flash-lite'))tag='💰 Rẻ nhất';
+            else if(id.includes('2.0-flash'))tag='🔥 Phổ biến';
+            else if(id.includes('1.5-pro'))tag='Pro';
+            else if(id.includes('1.5-flash'))tag='Flash';
+            return {id,name,tag};
+          })
+          .sort((a,b)=>{
+            const order=['2.5-pro','2.5-flash','2.0-flash-lite','2.0-flash','1.5-pro','1.5-flash'];
+            const ai=order.findIndex(x=>a.id.includes(x));
+            const bi=order.findIndex(x=>b.id.includes(x));
+            return (ai===-1?99:ai)-(bi===-1?99:bi);
+          });
+        if(models.length){
+          PROVIDERS.gemini.models=models;
+          renderModelSelect('gemini');
+          statusEl.innerHTML=`✅ ${models.length} models · <span style="color:var(--c1);cursor:pointer" onclick="showModelRecommendation('gemini')">💡 Xem gợi ý</span>`;
+          toast('Cập nhật OK',`${models.length} Gemini models`,'success');
+          return;
+        }
+      }
+    }catch(e){console.warn('Fetch Gemini models:',e)}
+  }
+
+  if(prov==='openrouter'&&key){
+    try{
+      const r=await fetch('https://openrouter.ai/api/v1/models',{
+        headers:{'Authorization':`Bearer ${key}`}
+      });
+      if(r.ok){
+        const d=await r.json();
+        const popular=['openai/gpt-4o','openai/gpt-4o-mini','anthropic/claude-3.5-sonnet','anthropic/claude-3-haiku','google/gemini-2.0-flash-001','google/gemini-2.5-pro-preview','meta-llama/llama-3.3-70b-instruct','deepseek/deepseek-chat','deepseek/deepseek-r1','mistralai/mistral-large','qwen/qwen-2.5-72b-instruct'];
+        const models=(d.data||[])
+          .filter(m=>popular.some(p=>m.id.includes(p))||m.id.includes('free'))
+          .slice(0,20)
+          .map(m=>{
+            let tag='';
+            const price=parseFloat(m.pricing?.prompt||0)*1000000;
+            if(price===0)tag='🆓 Free';
+            else if(price<1)tag='💰 Rẻ';
+            else if(price<10)tag='💵 Vừa';
+            else tag='💎 Premium';
+            if(m.id.includes('free'))tag='🆓 Free';
+            return {id:m.id,name:m.name||m.id,tag};
+          })
+          .sort((a,b)=>{
+            if(a.tag.includes('Free')&&!b.tag.includes('Free'))return -1;
+            if(!a.tag.includes('Free')&&b.tag.includes('Free'))return 1;
+            return 0;
+          });
+        if(models.length){
+          PROVIDERS.openrouter.models=models;
+          renderModelSelect('openrouter');
+          statusEl.innerHTML=`✅ ${models.length} models · <span style="color:var(--c1);cursor:pointer" onclick="showModelRecommendation('openrouter')">💡 Xem gợi ý</span>`;
+          toast('Cập nhật OK',`${models.length} OpenRouter models`,'success');
+          return;
+        }
+      }
+    }catch(e){console.warn('Fetch OpenRouter models:',e)}
+  }
+
+  // Fallback: dùng danh sách mặc định
+  renderModelSelect(prov);
+  statusEl.innerHTML=`✅ Mặc định · <span style="color:var(--c1);cursor:pointer" onclick="showModelRecommendation('${prov}')">💡 Xem gợi ý</span>`;
+}
+
+function showModelRecommendation(prov){
+  const recs={
+    gemini:{
+      best:'gemini-2.5-pro-preview-03-25',bestDesc:'Chất lượng cao nhất, tạo câu hỏi chính xác, giải thích tốt.',
+      balanced:'gemini-2.0-flash',balancedDesc:'Nhanh, miễn phí, đủ tốt cho hầu hết bài tập.',
+      cheap:'gemini-2.0-flash-lite',cheapDesc:'Rẻ nhất, nhanh nhất, phù hợp bài đơn giản.',
+      tip:'💡 Khuyến nghị: Dùng <b>gemini-2.0-flash</b> cho sử dụng hàng ngày (miễn phí, nhanh). Chuyển sang <b>2.5 Pro</b> khi cần câu hỏi chất lượng cao.'
+    },
+    openrouter:{
+      best:'openai/gpt-4o',bestDesc:'Chất lượng tốt nhất nhưng tốn credit.',
+      balanced:'deepseek/deepseek-chat',balancedDesc:'Rẻ, nhanh, chất lượng tốt.',
+      cheap:'meta-llama/llama-3.3-70b-instruct',cheapDesc:'Miễn phí trên nhiều plan.',
+      tip:'💡 Khuyến nghị: Dùng <b>deepseek-chat</b> (rẻ, tốt). Nếu hết credit, chọn model có tag 🆓 Free.'
+    },
+    openai:{
+      best:'gpt-4o',bestDesc:'Tốt nhất của OpenAI.',
+      balanced:'gpt-4o-mini',balancedDesc:'Nhanh, rẻ hơn 10x.',
+      cheap:'gpt-3.5-turbo',cheapDesc:'Rẻ nhất.',
+      tip:'💡 Khuyến nghị: Dùng <b>gpt-4o-mini</b> cho sử dụng hàng ngày.'
+    },
+    deepseek:{
+      best:'deepseek-chat',bestDesc:'DeepSeek V3 — tốt, rất rẻ.',
+      balanced:'deepseek-chat',balancedDesc:'Chỉ có 2 model, dùng chat là đủ.',
+      cheap:'deepseek-chat',cheapDesc:'Rẻ nhất trong các AI chất lượng cao.',
+      tip:'💡 Khuyến nghị: Dùng <b>deepseek-chat</b>. Giá rất rẻ, chất lượng ngang GPT-4.'
+    },
+    mistral:{
+      best:'mistral-large-latest',bestDesc:'Mạnh nhất của Mistral.',
+      balanced:'mistral-small-latest',balancedDesc:'Nhanh, phù hợp bài tập.',
+      cheap:'mistral-small-latest',cheapDesc:'Rẻ nhất.',
+      tip:'💡 Lưu ý: Mistral hay bị timeout từ Việt Nam. Nếu gặp lỗi, thử dùng Gemini hoặc DeepSeek.'
+    },
+    grok:{
+      best:'grok-2-1212',bestDesc:'Mạnh nhất của xAI.',
+      balanced:'grok-2-1212',balancedDesc:'Chỉ có vài model.',
+      cheap:'grok-beta',cheapDesc:'Bản beta.',
+      tip:'💡 Lưu ý: Grok cần API key từ x.ai, có thể có giới hạn.'
+    }
+  };
+  const rec=recs[prov]||recs.gemini;
+  const html=`
+    <div style="padding:16px">
+      <div style="font-size:1rem;font-weight:700;margin-bottom:14px">💡 Gợi ý Model cho ${PROVIDERS[prov]?.name||prov}</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="background:rgba(0,200,150,.1);border:1px solid rgba(0,200,150,.3);border-radius:8px;padding:12px;cursor:pointer" onclick="document.getElementById('setModel').value='${rec.best}';closeModal('recModal');toast('Đã chọn','${rec.best}','success')">
+          <div style="font-weight:700;color:var(--c1)">🏆 Chất lượng cao: <code>${rec.best}</code></div>
+          <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${rec.bestDesc}</div>
+        </div>
+        <div style="background:rgba(0,124,240,.1);border:1px solid rgba(0,124,240,.3);border-radius:8px;padding:12px;cursor:pointer" onclick="document.getElementById('setModel').value='${rec.balanced}';closeModal('recModal');toast('Đã chọn','${rec.balanced}','success')">
+          <div style="font-weight:700;color:var(--c2)">⚡ Cân bằng (khuyến nghị): <code>${rec.balanced}</code></div>
+          <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${rec.balancedDesc}</div>
+        </div>
+        <div style="background:rgba(247,151,30,.1);border:1px solid rgba(247,151,30,.3);border-radius:8px;padding:12px;cursor:pointer" onclick="document.getElementById('setModel').value='${rec.cheap}';closeModal('recModal');toast('Đã chọn','${rec.cheap}','success')">
+          <div style="font-weight:700;color:var(--c5)">💰 Tiết kiệm: <code>${rec.cheap}</code></div>
+          <div style="font-size:.85rem;color:var(--text2);margin-top:4px">${rec.cheapDesc}</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:10px 14px;background:var(--bg4);border-radius:8px;font-size:.85rem;color:var(--text3);line-height:1.6">${rec.tip}</div>
+      <div style="margin-top:12px">
+        <div style="font-size:.82rem;color:var(--text2);margin-bottom:6px">Hoặc nhập Model ID tùy chỉnh:</div>
+        <div style="display:flex;gap:8px">
+          <input type="text" id="customModelInput" placeholder="VD: gemini-2.5-flash-preview-04-17" style="flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.88rem;font-family:monospace">
+          <button class="btn btn-primary btn-sm" onclick="applyCustomModel()">Áp dụng</button>
+        </div>
+      </div>
+    </div>`;
+
+  // Tạo modal nếu chưa có
+  let modal=document.getElementById('recModal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='recModal';
+    modal.className='modal-overlay hidden';
+    modal.onclick=function(e){if(e.target.id==='recModal')closeModal('recModal')};
+    modal.innerHTML=`<div class="modal" style="max-width:500px"><div class="modal-header"><div class="modal-title">💡 Gợi ý Model AI</div><button class="btn btn-icon btn-sm" onclick="closeModal('recModal')">✕</button></div><div class="modal-body" id="recModalBody"></div></div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('recModalBody').innerHTML=html;
+  openModal('recModal');
+}
+
+function applyCustomModel(){
+  const input=document.getElementById('customModelInput');
+  const val=input.value.trim();
+  if(!val){toast('Lỗi','Nhập Model ID','warn');return;}
+
+  // Thêm model vào danh sách provider hiện tại
+  const prov=document.getElementById('setProvider').value;
+  const provObj=PROVIDERS[prov];
+  if(provObj){
+    const exists=provObj.models.find(m=>m.id===val);
+    if(!exists){
+      provObj.models.unshift({id:val,name:val,tag:'✏️ Tùy chỉnh'});
+      renderModelSelect(prov);
+    }
+    document.getElementById('setModel').value=val;
+  }
+  closeModal('recModal');
+  toast('Đã áp dụng',`Model: ${val}`,'success');
+}
+
+function saveSettings(){
+  ST.provider=document.getElementById('setProvider').value;
+  ST.model=document.getElementById('setModel').value;
+  ST.temp=document.getElementById('setTemp').value;
+  ST.lang=document.getElementById('setLang').value;
+  ST.apiKeys.forEach((k,i)=>{const inp=document.getElementById(`apikey_field_${i}`);if(inp)k.key=inp.value});
+  saveAll(); closeModal('settingsModal'); SFX.save();
+  toast('Đã lưu','Cài đặt AI đã được lưu','success'); renderHome();
+}
+function openSettings(){
+  document.getElementById('setProvider').value=ST.provider;
+  renderModelSelect(ST.provider);
+  document.getElementById('setModel').value=ST.model;
+  document.getElementById('setTemp').value=ST.temp;
+  document.getElementById('tempVal').textContent=ST.temp;
+  document.getElementById('setLang').value=ST.lang;
+  renderApiKeyList(); openModal('settingsModal');
+}
+
+// ═══ FIX #2: getApiKey — Logic rotation sửa lỗi ═══
+function getApiKey(preferProvider){
+  const prov=preferProvider||ST.provider;
+  let pool=ST.apiKeys.filter(k=>k.provider===prov&&k.key.trim());
+  if(!pool.length){pool=ST.apiKeys.filter(k=>k.key.trim());}
+  if(!pool.length)throw new Error('Chưa cấu hình API key! Vào ⚙️ Cài đặt để thêm key.');
+  if(ST.currentKeyIdx>=pool.length)ST.currentKeyIdx=0;
+  const key=pool[ST.currentKeyIdx];
+  ST.currentKeyIdx=(ST.currentKeyIdx+1)%pool.length;
+  return key;
+}
+
+// ═══ FIX #3: Xác định model đúng cho provider thực tế ═══
+function resolveModel(keyObj){
+  const prov=PROVIDERS[keyObj.provider];
+  if(keyObj.provider===ST.provider)return ST.model;
+  return prov.models[0]?.id||ST.model;
+}
+
+// ══════════════════════════════════════════
+// CALL AI ENGINE — Chuẩn NotebookLM: Smart Routing + Exponential Backoff
+// ══════════════════════════════════════════
+var _keyCooldown = {};
+function _isKeyCooling(keyStr){ var until=_keyCooldown[keyStr]; return until && Date.now()<until; }
+function _coolKey(keyStr,seconds){ _keyCooldown[keyStr]=Date.now()+seconds*1000; }
+function _clearCool(keyStr){ delete _keyCooldown[keyStr]; }
+
+async function callAI(messages){
+  var activeModel = ST.model;
+  
+  // BƯỚC 1: Xây pool key — lọc dead + đang cooldown
+  var allKeys = ST.apiKeys.filter(function(k){
+    return k.key.trim() && k.status !== 'dead' && !_isKeyCooling(k.key);
+  });
+  
+  // Nếu hết key sạch → đợi key sớm nhất hết cooldown
+  if(!allKeys.length){
+    var recoverable = ST.apiKeys.filter(function(k){ return k.key.trim() && k.status !== 'dead'; });
+    if(recoverable.length){
+      var soonest = recoverable[0];
+      for(var ri=1;ri<recoverable.length;ri++){
+        if((_keyCooldown[recoverable[ri].key]||0) < (_keyCooldown[soonest.key]||0)) soonest=recoverable[ri];
+      }
+      var waitTime = Math.max(0, (_keyCooldown[soonest.key]||0) - Date.now());
+      if(waitTime <= 30000){
+        toast('⏳ Đang chờ...','API hết giới hạn, chờ '+Math.ceil(waitTime/1000)+'s','warn',waitTime+1000);
+        await new Promise(function(res){setTimeout(res, waitTime+500)});
+        _clearCool(soonest.key);
+        allKeys.push(soonest);
+      }
+    }
+    if(!allKeys.length) throw new Error('Tất cả API keys đang bị giới hạn (429). Vui lòng đợi 1-2 phút rồi thử lại.');
+  }
+  
+  // BƯỚC 2: Sắp xếp ưu tiên — provider hiện tại trước, status ok trước
+  var pri = {'ok':0,'idle':1,'ratelimit':2,'fail':3};
+  allKeys.sort(function(a,b){
+    if(a.provider===ST.provider && b.provider!==ST.provider) return -1;
+    if(b.provider===ST.provider && a.provider!==ST.provider) return 1;
+    return (pri[a.status]||1) - (pri[b.status]||1);
+  });
+  
+  var lastErr;
+  
+  // BƯỚC 3: Thử từng key với Exponential Backoff
+  for(var i=0; i<allKeys.length; i++){
+    var keyObj = allKeys[i];
+    var prov = PROVIDERS[keyObj.provider];
+    if(!prov) continue;
+    
+    // Chọn model phù hợp provider
+    var model = activeModel;
+    if(keyObj.provider !== ST.provider){
+      model = prov.models[0] ? prov.models[0].id : activeModel;
+    }
+    // Kiểm tra model có thuộc provider không — nếu không thì dùng model mặc định
+    var modelBelongs = false;
+    for(var mi=0;mi<prov.models.length;mi++){
+      if(prov.models[mi].id === model){ modelBelongs = true; break; }
+    }
+    if(!modelBelongs) model = prov.models[0] ? prov.models[0].id : model;
+    
+    var ep = prov.endpoint(model, keyObj.key);
+    var body = prov.buildBody(messages, ST.temp, model);
+    var headers = {'Content-Type':'application/json'};
+    if(prov.authHeader){
+      var authH = prov.authHeader(keyObj.key);
+      for(var hk in authH) headers[hk] = authH[hk];
+    }
+    
+    // Thử tối đa 2 lần cho mỗi key (retry với delay tăng dần)
+    for(var attempt=0; attempt<2; attempt++){
+      try {
+        var ctrl = new AbortController();
+        var timeout = setTimeout(function(){ctrl.abort()}, 35000);
+        var r = await fetch(ep, {method:'POST', headers:headers, body:JSON.stringify(body), signal:ctrl.signal});
+        clearTimeout(timeout);
+        
+        if(r.ok){
+          var d = await r.json();
+          var txt = prov.parseResp(d);
+          if(txt && txt.trim().length > 5){
+            keyObj.status = 'ok';
+            _clearCool(keyObj.key);
+            return txt; // ← THÀNH CÔNG
+          }
+        }
+        
+        // === XỬ LÝ LỖI ===
+        if(r.status === 429){
+          var retryAfter = parseInt(r.headers.get('retry-after')) || 60;
+          _coolKey(keyObj.key, retryAfter);
+          keyObj.status = 'ratelimit';
+          console.warn('🔑 Key '+keyObj.provider+'['+(keyObj.label||'')+'] → 429, cooldown '+retryAfter+'s');
+          break; // Chuyển key khác
+        }
+        if(r.status === 503){
+          _coolKey(keyObj.key, 30);
+          if(attempt === 0){ await new Promise(function(res){setTimeout(res,3000)}); continue; }
+          break;
+        }
+        if(r.status === 402){
+          _coolKey(keyObj.key, 600);
+          keyObj.status = 'ratelimit';
+          keyObj.quota = '⚠️ Hết credit';
+          break;
+        }
+        if(r.status === 401 || r.status === 403){
+          keyObj.status = 'dead';
+          keyObj.quota = '❌ Key sai/hết hạn';
+          saveAll();
+          break;
+        }
+        
+        var errText = '';
+        try { errText = await r.text(); } catch(te){}
+        lastErr = new Error(prov.name+' '+r.status+': '+errText.slice(0,120));
+        break;
+        
+      } catch(fetchErr){
+        if(fetchErr.name === 'AbortError'){
+          _coolKey(keyObj.key, 15);
+          lastErr = new Error(prov.name+' timeout');
+          break;
+        }
+        lastErr = fetchErr;
+        if(attempt === 0){ await new Promise(function(res){setTimeout(res,1500)}); }
+      }
+    }
+  }
+  
+  throw lastErr || new Error('Tất cả API keys đều thất bại.');
+}
+
+function extractJSON(raw){
+  if(!raw||typeof raw!=='string')return '{}';
+  var cleaned=raw;
+  var cb=raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  if(cb) cleaned=cb[1];
+  cleaned=cleaned.replace(/,\s*}/g,'}').replace(/,\s*\]/g,']');
+  try{JSON.parse(cleaned.trim());return cleaned.trim()}catch(ex){}
+  var s=cleaned.indexOf('{'),e=cleaned.lastIndexOf('}');
+  if(s!==-1&&e>s){var c=cleaned.slice(s,e+1);try{JSON.parse(c);return c}catch(ex2){}}
+  var as=cleaned.indexOf('['),ae=cleaned.lastIndexOf(']');
+  if(as!==-1&&ae>as){var c2=cleaned.slice(as,ae+1);try{JSON.parse(c2);return c2}catch(ex3){}}
+  return cleaned.trim();
+}
+
+
+// ═══ FIX #6: validateQuizData — Kiểm tra dữ liệu từ AI ═══
+function validateQuizData(data){
+  if(!data||!data.questions||!Array.isArray(data.questions)||!data.questions.length)
+    throw new Error('AI không trả về câu hỏi hợp lệ. Thử lại.');
+  data.questions=data.questions.map((q,i)=>{
+    if(!q.question)throw new Error(`Câu ${i+1} thiếu nội dung`);
+    if(!Array.isArray(q.options)||q.options.length<2)throw new Error(`Câu ${i+1} thiếu đáp án`);
+    if(typeof q.correct!=='number'||q.correct<0||q.correct>=q.options.length)q.correct=0;
+    if(!q.icon)q.icon='❓'; if(!q.explanation)q.explanation='';
+    q.id=q.id||(i+1); return q;
+  });
+  return data;
+}
+
+// ═══ FIX #7: Web Search — Dùng Gemini Grounding (miễn phí, không CORS) ═══
+async function doWebSearch(){
+  const topic = document.getElementById('qTopic').value.trim();
+  const grade = document.getElementById('qGrade').value;
+  const subject = document.getElementById('qSubject').value;
+  if(!topic){toast('Nhập chủ đề','Hãy nhập chủ đề trước khi tìm kiếm','warn');return;}
+
+  const query = `${subject} lớp ${grade} ${topic} bài học ôn tập`;
+  const preview = document.getElementById('webSearchPreview');
+  preview.innerHTML = '<div class="spin-wrap" style="padding:20px"><div class="spinner" style="width:30px;height:30px;border-width:3px"></div><div class="spin-text">Đang tìm kiếm từ nhiều nguồn<span class="spin-dots"></span></div></div>';
+
+  let context = '';
+  let sourceUsed = '';
+
+  // ===== BƯỚC 1: Thử nguồn miễn phí KHÔNG CẦN API KEY =====
+
+  // 1A: DuckDuckGo Instant Answer (miễn phí, không cần key)
+  if(!context || context.length < 100){
+    try {
+      const ddgUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`;
+      const r = await fetch(ddgUrl);
+      if(r.ok){
+        const d = await r.json();
+        let ddgText = '';
+        if(d.Abstract) ddgText += d.Abstract + '\n';
+        if(d.Answer) ddgText += d.Answer + '\n';
+        if(d.RelatedTopics?.length){
+          ddgText += d.RelatedTopics.slice(0, 8).map(t => t.Text || '').filter(Boolean).join('\n');
+        }
+        if(ddgText.length > 80){ context = ddgText.slice(0, 4000); sourceUsed = 'DuckDuckGo'; }
+      }
+    } catch(e){ console.log('DDG search:', e.message); }
+  }
+
+  // 1B: Wikipedia API (miễn phí, tiếng Việt)
+  if(!context || context.length < 100){
+    try {
+      const wikiQuery = `${subject} ${topic} lớp ${grade}`;
+      const wUrl = `https://vi.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(wikiQuery)}&format=json&origin=*&srlimit=5&utf8=1`;
+      const r = await fetch(wUrl);
+      if(r.ok){
+        const d = await r.json();
+        const snippets = (d.query?.search || []).map(s => {
+          const clean = s.snippet.replace(/<[^>]+>/g, '');
+          return `📌 ${s.title}: ${clean}`;
+        }).join('\n\n');
+        if(snippets.length > 100){
+          // Lấy nội dung đầy đủ từ bài viết đầu tiên
+          const topTitle = d.query.search[0]?.title;
+          if(topTitle){
+            try {
+              const pageUrl = `https://vi.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(topTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*&exchars=3000`;
+              const r2 = await fetch(pageUrl);
+              if(r2.ok){
+                const d2 = await r2.json();
+                const pages = d2.query?.pages || {};
+                const pageText = Object.values(pages)[0]?.extract || '';
+                if(pageText.length > 100){
+                  context = pageText.slice(0, 4000) + '\n\n' + snippets;
+                  sourceUsed = 'Wikipedia Tiếng Việt';
+                }
+              }
+            } catch(e){}
+          }
+          if(!context || context.length < 100){
+            context = snippets.slice(0, 4000);
+            sourceUsed = 'Wikipedia Search';
+          }
+        }
+      }
+    } catch(e){ console.log('Wiki search:', e.message); }
+  }
+
+  // 1C: Wikidata / Wikipedia tiếng Anh (fallback)
+  if(!context || context.length < 100){
+    try {
+      const enQuery = `${subject} grade ${grade} ${topic}`;
+      const wUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(enQuery)}&format=json&origin=*&srlimit=3&utf8=1`;
+      const r = await fetch(wUrl);
+      if(r.ok){
+        const d = await r.json();
+        const topTitle = d.query?.search?.[0]?.title;
+        if(topTitle){
+          const pageUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(topTitle)}&prop=extracts&exintro=0&explaintext=1&format=json&origin=*&exchars=3000`;
+          const r2 = await fetch(pageUrl);
+          if(r2.ok){
+            const d2 = await r2.json();
+            const pageText = Object.values(d2.query?.pages||{})[0]?.extract || '';
+            if(pageText.length > 100){ context = pageText.slice(0, 4000); sourceUsed = 'Wikipedia EN'; }
+          }
+        }
+      }
+    } catch(e){ console.log('Wiki EN:', e.message); }
+  }
+
+  // ===== BƯỚC 2: Thử Jina AI (miễn phí, không cần key) =====
+  if(!context || context.length < 100){
+    try {
+      const searchUrl = `https://s.jina.ai/${encodeURIComponent(query)}`;
+      const r = await fetch(searchUrl, {
+        headers: {'Accept':'application/json','X-Return-Format':'markdown'},
+        signal: AbortSignal.timeout(15000)
+      });
+      if(r.ok){
+        const text = await r.text();
+        if(text.length > 100){ context = text.slice(0, 4000); sourceUsed = 'Jina AI Search'; }
+      }
+    } catch(e){ console.log('Jina search:', e.message); }
+  }
+
+  // ===== BƯỚC 3: Thử search API có key (nếu user cấu hình) =====
+  const searchProviderEl = document.getElementById('searchProvider');
+  const searchApiKeyEl = document.getElementById('searchApiKey');
+  const searchProvider = searchProviderEl ? searchProviderEl.value : 'jina';
+  const searchApiKey = searchApiKeyEl ? searchApiKeyEl.value.trim() : '';
+
+  if((!context || context.length < 100) && searchApiKey){
+    try {
+      if(searchProvider === 'tavily'){
+        const r = await fetch('https://api.tavily.com/search', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':`Bearer ${searchApiKey}`},
+          body:JSON.stringify({query, search_depth:'basic', include_answer:true, max_results:5})
+        });
+        if(r.ok){ const d = await r.json(); context = (d.answer||'') + (d.results||[]).map(x=>'\n'+x.title+'\n'+x.content).join('\n').slice(0,3000); sourceUsed = 'Tavily'; }
+      } else if(searchProvider === 'serper'){
+        const r = await fetch('https://google.serper.dev/search', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-API-KEY':searchApiKey},
+          body:JSON.stringify({q:query, gl:'vn', hl:'vi', num:5})
+        });
+        if(r.ok){ const d = await r.json(); context = (d.organic||[]).map(x=>x.title+': '+x.snippet).join('\n\n').slice(0,3000); sourceUsed = 'Serper'; }
+      } else if(searchProvider === 'brave'){
+        const r = await fetch(`https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=5&lang=vi`, {
+          headers:{'Accept':'application/json','X-Subscription-Token':searchApiKey}
+        });
+        if(r.ok){ const d = await r.json(); context = (d.web?.results||[]).map(x=>x.title+': '+x.description).join('\n\n').slice(0,3000); sourceUsed = 'Brave'; }
+      }
+    } catch(e){ console.log('Paid search:', e.message); }
+  }
+
+  // ===== BƯỚC 4: Gemini Grounding (chỉ thử nếu chưa có gì) =====
+  if(!context || context.length < 100){
+    try {
+      context = await searchViaGeminiGrounding('', subject, grade, topic);
+      if(context && context.length > 100) sourceUsed = 'Gemini Grounding';
+    } catch(e){ console.log('Gemini grounding:', e.message); }
+  }
+
+  // ===== BƯỚC 5: Fallback cuối — dùng AI knowledge =====
+  if(!context || context.length < 100){
+    try {
+      context = await searchViaAIKnowledge(subject, grade, topic);
+      if(context && context.length > 100) sourceUsed = 'AI Knowledge';
+    } catch(e){ console.log('AI knowledge:', e.message); }
+  }
+
+  // ===== HIỂN THỊ KẾT QUẢ =====
+  if(context && context.length > 80){
+    ST.sourceContext = context;
+    document.getElementById('sourceContext').style.display = 'block';
+    document.getElementById('sourceContextText').textContent = context.slice(0, 600) + '...';
+    preview.innerHTML = `<div class="alert alert-success">✅ Tìm thấy ${context.length} ký tự từ <strong>${sourceUsed}</strong>. AI sẽ dùng nguồn này tạo câu hỏi.</div>`;
+    toast('Tìm kiếm xong', `${context.length} ký tự từ ${sourceUsed}`, 'success');
+  } else {
+    ST.sourceContext = `[AI sẽ tự sinh nội dung cho "${subject} lớp ${grade}" - "${topic}"]`;
+    preview.innerHTML = `<div class="alert alert-warn">⚠️ Không tìm được nguồn ngoài. AI sẽ dùng kiến thức nội bộ để tạo câu hỏi.</div>`;
+    toast('Tìm kiếm', 'Dùng kiến thức AI nội bộ', 'info');
+  }
+}
+
+async function searchViaGeminiGrounding(apiKey, subject, grade, topic){
+  // Chỉ dùng Gemini key KHÔNG đang cooldown
+  const gemKeys = ST.apiKeys.filter(k =>
+    k.provider === 'gemini' &&
+    k.key.trim() &&
+    k.status !== 'dead' &&
+    !_isKeyCooling(k.key)
+  );
+
+  if(!gemKeys.length){
+    console.log('Gemini grounding: tất cả key đang cooldown, bỏ qua');
+    return '';
+  }
+
+  // Chỉ thử TỐI ĐA 1 key (tránh spam)
+  const keyObj = gemKeys[0];
+  try {
+    const ep = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${keyObj.key}`;
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 15000);
+
+    const r = await fetch(ep, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        contents:[{parts:[{text:`Tìm và tóm tắt kiến thức: ${subject} lớp ${grade} - ${topic}. Viết 400 từ, chính xác.`}]}],
+        generationConfig:{temperature:0.3,maxOutputTokens:1200},
+        tools:[{google_search:{}}]
+      }),
+      signal:ctrl.signal
+    });
+    clearTimeout(timeout);
+
+    if(r.ok){
+      const d = await r.json();
+      const txt = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if(txt.length > 100) return txt.slice(0, 3500);
+    } else if(r.status === 429 || r.status === 503){
+      _coolKey(keyObj.key, 60);
+      keyObj.status = 'ratelimit';
+    }
+  } catch(e){
+    console.log('Gemini grounding:', e.message);
+  }
+  return '';
+}
+
+async function searchViaAIKnowledge(subject, grade, topic){
+  try {
+    // Giảm prompt tối thiểu để tiết kiệm token
+    const msgs = [{
+      role: 'user',
+      content: `Tóm tắt ngắn (300 từ) kiến thức "${subject} lớp ${grade}" về "${topic}". Ghi các điểm chính, công thức, ví dụ.`
+    }];
+    const res = await callAI(msgs);
+    return (res && res.length > 80) ? res.slice(0, 3000) : '';
+  } catch(e){
+    console.log('AI knowledge:', e);
+    return '';
+  }
+}
+async function fetchUrls(){
+  const inputs=document.querySelectorAll('#urlList input[type="url"]');
+  const urls=Array.from(inputs).map(i=>i.value.trim()).filter(Boolean);
+  if(!urls.length){toast('Lỗi','Nhập ít nhất 1 URL','error');return;}
+  const btn=document.getElementById('btnFetchUrls');
+  btn.disabled=true;btn.textContent='⏳ Đang tải...';
+  const preview=document.getElementById('urlPreview'); preview.innerHTML=''; let allText='';
+  for(const url of urls){
+    try{
+      const r=await fetch(`https://r.jina.ai/${url}`,{headers:{'Accept':'text/plain'}});
+      if(r.ok){const t=await r.text();allText+=`\n\n=== ${url} ===\n`+t.slice(0,2000);
+        preview.innerHTML+=`<div class="alert alert-success" style="margin-top:6px">✅ ${url.slice(0,60)}... (${t.length} ký tự)</div>`}
+    }catch(e){preview.innerHTML+=`<div class="alert alert-error" style="margin-top:6px">❌ ${url.slice(0,60)}: ${e.message}</div>`}
+  }
+  if(allText){ST.sourceContext=allText.slice(0,6000);
+    document.getElementById('sourceContext').style.display='block';
+    document.getElementById('sourceContextText').textContent=ST.sourceContext.slice(0,500)+'...';
+    toast('Đã tải URL','Nội dung sẵn sàng','success')}
+  btn.disabled=false;btn.textContent='📥 Tải nội dung URL';
+}
+function handleFiles(e){
+  const files=Array.from(e.target.files);
+  const items=document.getElementById('fileItems');
+  files.forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      let text=ev.target.result;
+      if(typeof text!=='string'||text.includes('\x00')||text.includes('%PDF')){
+        toast('Cảnh báo',`${f.name} không đọc được. Chỉ hỗ trợ TXT/MD/CSV.`,'warn');return}
+      ST.sourceContext=(ST.sourceContext||'')+'\n\n=== '+f.name+' ===\n'+text.slice(0,3000);
+      document.getElementById('sourceContext').style.display='block';
+      document.getElementById('sourceContextText').textContent=(ST.sourceContext||'').slice(0,600)+'...';
+      toast('Đã đọc file',f.name,'success');
+    };
+    reader.readAsText(f,'UTF-8');
+    const div=document.createElement('div'); div.className='file-item';
+    div.innerHTML=`<span>📄 ${f.name} <span class="text-muted">(${(f.size/1024).toFixed(1)}KB)</span></span><button class="btn btn-icon btn-sm" onclick="this.parentElement.remove()">✕</button>`;
+    items.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════
+// BUILD PROMPT — Tạo prompt gửi AI (có System prompt)
+// ══════════════════════════════════════════
+function buildQuizPrompt(){
+  const subject=document.getElementById('qSubject').value;
+  const grade=document.getElementById('qGrade').value;
+  const topic=document.getElementById('qTopic').value;
+  const count=document.getElementById('qCount').value;
+  const hasEmoji=isOn('tEmoji');
+  const hasExplain=isOn('tExplain');
+  const lang=ST.lang==='vi'?'Tiếng Việt':'English';
+  let contextBlock='';
+  if(ST.sourceType==='paste'){
+    const paste=document.getElementById('pasteContent').value.trim();
+    if(paste)contextBlock=`\n\nNỘI DUNG TÀI LIỆU THAM KHẢO:\n---\n${paste.slice(0,4000)}\n---\n`;
+  }else if(ST.sourceContext&&ST.sourceType!=='ai'){
+    contextBlock=`\n\nNỘI DUNG NGUỒN NGOÀI:\n---\n${ST.sourceContext.slice(0,4000)}\n---\n`;
+  }
+  return `Bạn là chuyên gia giáo dục Việt Nam.${contextBlock}
+Tạo CHÍNH XÁC ${count} câu hỏi trắc nghiệm cho:
+- Môn: ${subject}
+- Lớp: ${grade}
+- Chủ đề: ${topic}
+- Ngôn ngữ: ${lang}
+- Độ khó: tăng dần
+${hasEmoji?'- Thêm 1 emoji phù hợp (icon field)':'- icon: "❓"'}
+${hasExplain?'- Viết giải thích ngắn gọn cho lớp '+grade:'- explanation: ""'}
+
+TRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, KHÔNG text ngoài JSON:
+{"title":"Tên bộ câu hỏi","subject":"${subject}","grade":"${grade}","questions":[{"id":1,"icon":"emoji","question":"Câu hỏi","options":["A","B","C","D"],"correct":0,"explanation":"Giải thích"}]}
+Lưu ý: "correct" là INDEX (0-3) của đáp án đúng.`;
+}
+function buildFlashPrompt(){
+  const subject=document.getElementById('fcSubject').value;
+  const grade=document.getElementById('fcGrade').value;
+  const topic=document.getElementById('fcTopic').value;
+  const count=document.getElementById('fcCount').value;
+  const type=document.getElementById('fcType').value;
+  const typeMap={qa:'Câu hỏi - Trả lời',vocab:'Từ vựng - Nghĩa',formula:'Công thức - Ví dụ',translate:'Từ - Dịch',fill:'Điền vào chỗ trống'};
+  let contextBlock='';
+  if(ST.sourceContext)contextBlock=`\nNguồn tham khảo: ${ST.sourceContext.slice(0,2000)}\n`;
+  return `Bạn là chuyên gia giáo dục tạo flashcard.${contextBlock}
+Tạo ${count} flashcard kiểu "${typeMap[type]}" cho:
+- Môn: ${subject}, Lớp: ${grade}, Chủ đề: ${topic}
+Mỗi flashcard: mặt trước ngắn gọn (dưới 20 từ), mặt sau chính xác có ví dụ. Thêm emoji.
+TRẢ VỀ JSON, KHÔNG markdown code block:
+{"title":"Tên bộ thẻ","cards":[{"id":1,"icon":"emoji","front":"Mặt trước","frontSub":"","back":"Mặt sau","backSub":"","hint":"Mẹo ghi nhớ"}]}`;
+}
+function previewPrompt(){document.getElementById('promptPreviewText').textContent=buildQuizPrompt();openModal('promptModal')}
+function copyPrompt(){navigator.clipboard.writeText(document.getElementById('promptPreviewText').textContent).then(()=>toast('Đã copy','Prompt đã sao chép','success'))}
+
+// ══════════════════════════════════════════
+// QUIZ ENGINE
+// ══════════════════════════════════════════
+async function startQuiz(){
+  SFX.start();
+  var topic=document.getElementById('qTopic').value.trim();
+  if(!topic){toast('Thiếu chủ đề','Nhập chủ đề ôn tập','warn');return;}
+  if(!ST.apiKeys.filter(function(k){return k.key.trim()}).length){toast('Chưa có API key','Vào Cài đặt thêm','error');openSettings();return;}
+  var area=document.getElementById('quizLoadingArea');
+  area.innerHTML='<div class="card"><div class="spin-wrap"><div class="spinner"></div><div class="spin-text">AI đang tạo '+document.getElementById('qCount').value+' câu hỏi<span class="spin-dots"></span></div><div class="text-muted" style="font-size:.8rem;margin-top:8px">Provider: '+PROVIDERS[ST.provider].name+' · '+ST.model+'</div></div></div>';
+  document.getElementById('btnStartQuiz').disabled=true;
+  try{
+    var sysMsg={role:'system',content:'Bạn là hệ thống tạo câu hỏi giáo dục. LUÔN trả về JSON hợp lệ, KHÔNG dùng markdown code block, KHÔNG thêm text ngoài JSON. Mỗi câu có ĐÚNG 4 đáp án. "correct" là INDEX (0-3).'};
+    var userPrompt=buildQuizPrompt();
+    var quizData=null;
+    var lastParseErr=null;
+    for(var attempt=0;attempt<2;attempt++){
+      try{
+        var promptText=userPrompt+(attempt>0?'\n\nQUAN TRỌNG: CHỈ trả JSON thuần, TUYỆT ĐỐI KHÔNG có text khác ngoài JSON.':'');
+        var raw=await callAI([sysMsg,{role:'user',content:promptText}]);
+        quizData=validateQuizData(JSON.parse(extractJSON(raw)));
+        break;
+      }catch(parseErr){
+        lastParseErr=parseErr;
+        if(attempt===0)toast('⏳ AI trả sai format, thử lại...','','warn',2000);
+      }
+    }
+    if(!quizData)throw lastParseErr;
+    var qs=quizData.questions;
+    if(isOn('tRandom'))qs=shuffle(qs);
+    if(isOn('tShuffleOpts'))qs=qs.map(function(q){
+      var arr=[].concat(q.options);var ct=arr[q.correct];var sh=shuffle(arr);q.options=sh;q.correct=sh.indexOf(ct);return q;
+    });
+    var timerVal=document.getElementById('qTimer').value;
+    var timerMins=timerVal==='custom'?parseInt(document.getElementById('qTimerCustom').value)||10:parseInt(timerVal)||0;
+    ST.quiz={title:quizData.title||document.getElementById('qSubject').value+' Lớp '+document.getElementById('qGrade').value,
+      subject:document.getElementById('qSubject').value,grade:document.getElementById('qGrade').value,
+      questions:qs,current:0,answers:[],startTime:Date.now(),
+      answerMode:document.getElementById('qAnswerMode').value,
+      timerMins:timerMins,timerLeft:timerMins*60};
+    area.innerHTML='';document.getElementById('btnStartQuiz').disabled=false;
+    document.getElementById('quizConfig').classList.add('hidden');
+    document.getElementById('quizPlay').classList.remove('hidden');
+    document.getElementById('quizResult').classList.add('hidden');
+    document.getElementById('qMeta').textContent=ST.quiz.subject+' · Lớp '+ST.quiz.grade;
+    startTimer();renderQuestion();
+  }catch(e){
+    var hint='Kiểm tra API key và kết nối mạng';
+    if(String(e.message).indexOf('Failed to fetch')!==-1)hint='Lỗi kết nối. Thử đổi provider (OpenRouter hỗ trợ tốt).';
+    else if(String(e.message).indexOf('401')!==-1||String(e.message).indexOf('403')!==-1)hint='API key không hợp lệ. Kiểm tra lại trong Cài đặt.';
+    else if(String(e.message).indexOf('429')!==-1)hint='API hết lượt dùng. Đợi 1-2 phút hoặc thêm key khác.';
+    area.innerHTML='<div class="alert alert-error">❌ '+e.message+'<br><small>'+hint+'</small></div>';
+    document.getElementById('btnStartQuiz').disabled=false;
+    toast('Lỗi tạo bài',hint,'error');
+  }
+}
+
+function renderQuestion(){
+  const q=ST.quiz;if(!q)return;
+  const idx=q.current,total=q.questions.length,pct=Math.round(idx/total*100);
+  document.getElementById('qProgressLabel').textContent=`Câu ${idx+1} / ${total}`;
+  document.getElementById('qProgressFill').style.width=pct+'%';
+  const item=q.questions[idx],letters=['A','B','C','D'];
+  document.getElementById('questionArea').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">Câu ${idx+1} / ${total}</div>
+      ${item.icon?`<span class="q-emoji">${item.icon}</span>`:''}
+      <p class="q-text">${item.question}</p>
+      <div class="q-options" id="optList">
+        ${item.options.map((opt,i)=>`<div class="q-opt" data-i="${i}" onclick="pickOption(this,${i})">
+          <span class="opt-letter">${letters[i]}</span><span>${opt}</span></div>`).join('')}
+      </div>
+      <div id="explainBox"></div>
+    </div>
+    <div class="q-actions">
+      <button class="btn btn-primary hidden" id="btnNext" onclick="nextQuestion()">
+        ${idx===total-1?'✅ Hoàn thành':'Câu tiếp theo →'}</button>
+    </div>`;
+}
+function pickOption(el,idx){
+  if(el.classList.contains('disabled'))return;SFX.click();
+  const q=ST.quiz,item=q.questions[q.current],mode=q.answerMode;
+  q.answers[q.current]=idx;
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('picked'));
+  el.classList.add('picked');
+  if(mode==='each'){
+    document.querySelectorAll('.q-opt').forEach((o,i)=>{
+      o.classList.add('disabled');
+      if(i===item.correct)o.classList.add('correct');
+      if(i===idx&&idx!==item.correct)o.classList.add('wrong');
+    });
+    if(idx===item.correct)SFX.correct();else SFX.wrong();
+    if(item.explanation)document.getElementById('explainBox').innerHTML=`<div class="q-explain"><strong>💡 Giải thích:</strong> ${item.explanation}</div>`;
+  }
+  document.getElementById('btnNext').classList.remove('hidden');
+}
+function nextQuestion(){
+  SFX.click();const q=ST.quiz;
+  if(q.answers[q.current]===undefined)q.answers[q.current]=-1;
+  if(q.current<q.questions.length-1){q.current++;renderQuestion()}else finishQuiz();
+}
+function endQuizEarly(){if(confirm('Kết thúc bài sớm?'))finishQuiz()}
+function finishQuiz(){
+  stopTimer();SFX.complete();
+  const q=ST.quiz,total=q.questions.length;
+  const correct=q.questions.filter((item,i)=>q.answers[i]===item.correct).length;
+  const pct=Math.round(correct/total*100);
+  const elapsed=Math.round((Date.now()-q.startTime)/1000);
+  const grade=pct>=90?'🌟 Xuất sắc':pct>=80?'🏆 Giỏi':pct>=65?'👍 Khá':pct>=50?'📖 Trung bình':'💪 Cần cố gắng';
+  const stars=pct>=90?'⭐⭐⭐':pct>=70?'⭐⭐':'⭐';
+  ST.stats.totalQ+=total;ST.stats.correctQ+=correct;ST.stats.sessions++;
+  ST.stats.history.unshift({date:new Date().toLocaleDateString('vi'),title:q.title,subject:q.subject,grade:q.grade,correct,total,pct,elapsed});
+  if(ST.stats.history.length>20)ST.stats.history=ST.stats.history.slice(0,20);
+  saveAll();
+  const letters=['A','B','C','D'];
+  const reviewHtml=q.questions.map((item,i)=>{
+    const userAns=q.answers[i],isOk=userAns===item.correct;
+    return `<div class="q-card" style="margin-bottom:12px">
+      <div class="q-num">${isOk?'✅':'❌'} Câu ${i+1}</div>
+      ${item.icon?`<span style="font-size:1.5rem">${item.icon}</span> `:''}
+      <p class="q-text" style="font-size:.95rem">${item.question}</p>
+      <div style="margin-top:10px;font-size:.88rem">
+        ${item.options.map((opt,oi)=>{
+          let cls='';
+          if(oi===item.correct)cls='color:var(--c1);font-weight:700';
+          else if(oi===userAns&&!isOk)cls='color:var(--c4);text-decoration:line-through';
+          return `<div style="${cls};padding:4px 0">${letters[oi]}. ${opt} ${oi===item.correct?'✓':oi===userAns&&!isOk?'✗':''}</div>`;
+        }).join('')}
+      </div>
+      ${item.explanation?`<div class="q-explain">💡 ${item.explanation}</div>`:''}
+    </div>`;
+  }).join('');
+  document.getElementById('quizPlay').classList.add('hidden');
+  const result=document.getElementById('quizResult');result.classList.remove('hidden');
+  result.innerHTML=`
+    <div class="result-hero">
+      <div class="result-stars">${stars}</div>
+      <div class="result-score">${pct}%</div>
+      <div class="result-grade">${grade}</div>
+      <div class="result-stats">
+        <div class="rstat"><div class="rstat-n" style="color:var(--c1)">${correct}</div><div class="rstat-l">Câu đúng</div></div>
+        <div class="rstat"><div class="rstat-n" style="color:var(--c4)">${total-correct}</div><div class="rstat-l">Câu sai</div></div>
+        <div class="rstat"><div class="rstat-n" style="color:var(--c2)">${Math.floor(elapsed/60)}:${(elapsed%60).toString().padStart(2,'0')}</div><div class="rstat-l">Thời gian</div></div>
+      </div>
+    </div>
+    <div class="export-bar" style="margin-bottom:20px">
+      <span style="font-size:.85rem;font-weight:600;color:var(--text2)">📤 Xuất kết quả:</span>
+      <button class="btn btn-secondary btn-sm" onclick="exportQuiz('md')">📄 Markdown</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportQuiz('html')">🌐 HTML</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportQuiz('pdf')">🖨️ In/PDF</button>
+    </div>
+    <div class="sec-title">📋 Chi tiết từng câu</div>
+    ${reviewHtml}
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-secondary" onclick="retryQuiz()">🔁 Làm lại bài này</button> <button class="btn btn-primary" onclick="backToQuizConfig()">📝 Làm bài mới</button>
+    </div>`;
+}
+function retryQuiz(){
+  if(!ST.quiz) return;
+  ST.quiz.current = 0;
+  ST.quiz.answers = [];
+  ST.quiz.startTime = Date.now();
+  if(ST.quiz.timerMins) ST.quiz.timerLeft = ST.quiz.timerMins * 60;
+  if(isOn('tRandom')) ST.quiz.questions = shuffle(ST.quiz.questions);
+  if(isOn('tShuffleOpts')) ST.quiz.questions = ST.quiz.questions.map(function(q){
+    var arr=[].concat(q.options); var ct=arr[q.correct]; var sh=shuffle(arr);
+    q.options=sh; q.correct=sh.indexOf(ct); return q;
+  });
+  document.getElementById('quizResult').classList.add('hidden');
+  document.getElementById('quizPlay').classList.remove('hidden');
+  startTimer();
+  renderQuestion();
+  SFX.start();
+  toast('🔁 Làm lại','Bài trắc nghiệm đã reset','info');
+}
+function retryQuiz(){
+  if(!ST.quiz)return;
+  ST.quiz.current=0;ST.quiz.answers=[];ST.quiz.startTime=Date.now();
+  if(ST.quiz.timerMins)ST.quiz.timerLeft=ST.quiz.timerMins*60;
+  if(isOn('tRandom'))ST.quiz.questions=shuffle(ST.quiz.questions);
+  document.getElementById('quizResult').classList.add('hidden');
+  document.getElementById('quizPlay').classList.remove('hidden');
+  startTimer();renderQuestion();SFX.start();
+  toast('🔁 Làm lại','Bài trắc nghiệm đã reset','info');
+}
+function backToQuizConfig(){
+  document.getElementById('quizConfig').classList.remove('hidden');
+  document.getElementById('quizPlay').classList.add('hidden');
+  document.getElementById('quizResult').classList.add('hidden');
+  document.getElementById('quizLoadingArea').innerHTML='';SFX.click();
+}
+
+// ══════════════════════════════════════════
+// TIMER — Đồng hồ đếm ngược + cảnh báo âm thanh
+// ══════════════════════════════════════════
+function startTimer(){
+  clearInterval(ST.timerInterval);
+  var q=ST.quiz;
+  if(!q.timerMins){document.getElementById('timerDisplay').textContent='∞';return;}
+  q.timerEnd=Date.now()+q.timerMins*60*1000;
+  ST.timerInterval=setInterval(function(){
+    var remaining=Math.round((q.timerEnd-Date.now())/1000);
+    q.timerLeft=remaining;
+    var el=document.getElementById('timerDisplay');
+    if(!el){clearInterval(ST.timerInterval);return;}
+    el.textContent=fmtTime(Math.max(0,remaining));
+    var pct=remaining/(q.timerMins*60);
+    el.className='timer-display';
+    if(pct<=0.2&&pct>0.1){el.classList.add('warn');if(remaining%30===0)SFX.timerWarn()}
+    if(pct<=0.1){el.classList.add('danger');if(remaining%10===0)SFX.timerDanger()}
+    if(remaining===60)toast('⏰ Còn 1 phút!','Hãy nhanh lên!','warn',2000);
+    if(remaining===30)toast('⚠️ Còn 30 giây!','','warn',2000);
+    if(remaining<=10&&remaining>0)SFX.timerDanger();
+    if(remaining<=0){clearInterval(ST.timerInterval);toast('⏰ Hết giờ!','Bài nộp tự động','warn');setTimeout(finishQuiz,1500)}
+  },1000);
+}
+
+function stopTimer(){clearInterval(ST.timerInterval)}
+function fmtTime(s){
+  const m=Math.floor(Math.abs(s)/60).toString().padStart(2,'0');
+  const ss=(Math.abs(s)%60).toString().padStart(2,'0');
+  return `${m}:${ss}`;
+}
+
+// ══════════════════════════════════════════
+// FLASHCARD ENGINE
+// ══════════════════════════════════════════
+const FC_COLORS={
+  blue:{front:'linear-gradient(135deg,#0d1b45,#1a2456)',border:'rgba(0,124,240,.3)',back:'linear-gradient(135deg,#0a2d1a,#1a4530)',borderB:'rgba(0,200,150,.3)'},
+  green:{front:'linear-gradient(135deg,#0a2d1a,#1a3d28)',border:'rgba(0,200,150,.3)',back:'linear-gradient(135deg,#1a2456,#2a3a6a)',borderB:'rgba(0,124,240,.3)'},
+  purple:{front:'linear-gradient(135deg,#1a0a2e,#2d1a4a)',border:'rgba(121,40,202,.4)',back:'linear-gradient(135deg,#2d0a1a,#4a1a2d)',borderB:'rgba(255,77,77,.3)'},
+  orange:{front:'linear-gradient(135deg,#2d1a0a,#4a2d1a)',border:'rgba(247,151,30,.3)',back:'linear-gradient(135deg,#0d1b45,#1a2456)',borderB:'rgba(0,124,240,.3)'},
+  pink:{front:'linear-gradient(135deg,#2d0a1a,#4a1a2d)',border:'rgba(255,100,150,.3)',back:'linear-gradient(135deg,#0a2d1a,#1a3d28)',borderB:'rgba(0,200,150,.3)'},
+};
+async function startFlashcards(){
+  SFX.start();
+  var topic=document.getElementById('fcTopic').value.trim();
+  if(!topic){toast('Thiếu chủ đề','Nhập chủ đề flashcard','warn');return;}
+  if(!ST.apiKeys.filter(function(k){return k.key.trim()}).length){toast('Chưa có API key','Vào Cài đặt thêm','error');openSettings();return;}
+  var area=document.getElementById('flashLoadingArea');
+  var count=document.getElementById('fcCount').value;
+  area.innerHTML='<div class="card"><div class="spin-wrap"><div class="spinner"></div><div class="spin-text">AI đang tạo '+count+' flashcards<span class="spin-dots"></span></div></div></div>';
+  try{
+    var sysMsg={role:'system',content:'Bạn là hệ thống tạo flashcard giáo dục. LUÔN trả về JSON hợp lệ, KHÔNG dùng markdown code block.'};
+    var fcData=null;
+    var lastFcErr=null;
+    for(var attempt=0;attempt<2;attempt++){
+      try{
+        var prompt=buildFlashPrompt()+(attempt>0?'\n\nCHỈ trả JSON thuần.':'');
+        var raw=await callAI([sysMsg,{role:'user',content:prompt}]);
+        fcData=JSON.parse(extractJSON(raw));
+        if(!fcData.cards||!fcData.cards.length)throw new Error('AI không trả về flashcards hợp lệ');
+        break;
+      }catch(e2){
+        lastFcErr=e2;
+        if(attempt===0)toast('⏳ Thử lại...','','warn',1500);
+      }
+    }
+    if(!fcData||!fcData.cards||!fcData.cards.length)throw lastFcErr;
+    var color=document.getElementById('fcColor').value;
+    ST.flash={title:fcData.title||'Flashcard',cards:fcData.cards,index:0,flipped:false,color:color,memRatings:{},
+      subject:document.getElementById('fcSubject').value,grade:document.getElementById('fcGrade').value};
+    ST.stats.fcLearned+=fcData.cards.length;saveAll();
+    area.innerHTML='';
+    document.getElementById('flashConfig').classList.add('hidden');
+    document.getElementById('flashPlay').classList.remove('hidden');
+    renderFC();
+  }catch(e){
+    area.innerHTML='<div class="alert alert-error">❌ '+e.message+'</div>';
+    toast('Lỗi tạo flashcard',e.message,'error');
+  }
+}
+
+function renderFC(){
+  const f=ST.flash;if(!f)return;
+  const card=f.cards[f.index],col=FC_COLORS[f.color]||FC_COLORS.blue,total=f.cards.length;
+  document.getElementById('fcFront').style.background=col.front;
+  document.getElementById('fcFront').style.borderColor=col.border;
+  document.getElementById('fcBack').style.background=col.back;
+  document.getElementById('fcBack').style.borderColor=col.borderB;
+  document.getElementById('fcIcon').textContent=card.icon||'❓';
+  document.getElementById('fcFrontText').textContent=card.front;
+  document.getElementById('fcFrontSub').textContent=card.frontSub||'';
+  document.getElementById('fcBackText').textContent=card.back;
+  document.getElementById('fcBackSub').textContent=card.backSub||(card.hint?`💡 ${card.hint}`:'');
+  document.getElementById('fcCounter').textContent=`${f.index+1} / ${total}`;
+  document.getElementById('fcProgressFill').style.width=`${Math.round((f.index+1)/total*100)}%`;
+  document.getElementById('fcCard').classList.remove('flipped');
+  document.getElementById('fcMemBtns').classList.add('hidden');
+  f.flipped=false;
+  document.getElementById('fcPrev').disabled=f.index===0;
+  document.getElementById('fcNext').disabled=f.index===total-1;
+}
+function flipCard(){
+  const f=ST.flash;if(!f)return;
+  document.getElementById('fcCard').classList.toggle('flipped');
+  f.flipped=!f.flipped;
+  if(f.flipped){SFX.flip();document.getElementById('fcMemBtns').classList.remove('hidden')}
+}
+function fcNav(dir){
+  const f=ST.flash;if(!f)return;
+  const n=f.index+dir;if(n<0||n>=f.cards.length)return;
+  f.index=n;f.flipped=false;SFX.nav();renderFC();
+}
+function memRate(level){
+  const f=ST.flash;if(!f)return;
+  f.memRatings[f.index]=level;SFX.click();
+  if(f.index<f.cards.length-1)setTimeout(()=>fcNav(1),300);
+  else{SFX.complete();
+    const hard=Object.values(f.memRatings).filter(r=>r==='hard').length;
+    const easy=Object.values(f.memRatings).filter(r=>r==='easy').length;
+    toast('🎉 Hoàn thành!',`Dễ: ${easy} · Khó: ${hard}`,'success',5000)}
+}
+function resetFlash(){const f=ST.flash;if(!f)return;f.index=0;f.flipped=false;f.memRatings={};SFX.start();renderFC()}
+function backToFlashConfig(){
+  document.getElementById('flashConfig').classList.remove('hidden');
+  document.getElementById('flashPlay').classList.add('hidden');
+  document.getElementById('flashLoadingArea').innerHTML='';SFX.click();
+}
+function shuffleFlash(){const f=ST.flash;if(!f)return;f.cards=shuffle(f.cards);f.index=0;f.memRatings={};SFX.click();renderFC();toast('Đã xáo trộn','','info')}
+
+// ══════════════════════════════════════════
+// TOPICS
+// ══════════════════════════════════════════
+let selectedTopic=null;
+function renderTopics(){
+  const render=(id,data)=>{const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=data.map(t=>`<div class="topic-card" onclick="selectTopic(this,'${t.sub}','${t.grade}','${t.name.replace(/'/g,"\\'")}')">
+      <div class="tc-icon">${t.icon}</div><div class="tc-name">${t.name}</div><div class="tc-grade">${t.sub} · Lớp ${t.grade}</div></div>`).join('')};
+  render('topics2Toan',TOPIC_DATA.k2_toan);render('topics2VietAnh',TOPIC_DATA.k2_viet_anh);
+  render('topics3Toan',TOPIC_DATA.k3_toan);render('topics3VietAnh',TOPIC_DATA.k3_viet_anh);
+}
+function selectTopic(el,sub,grade,name){
+  SFX.click();document.querySelectorAll('.topic-card').forEach(t=>t.classList.remove('sel'));el.classList.add('sel');
+  selectedTopic={sub,grade,name};
+  document.getElementById('topicChosenName').textContent=`${name} (${sub} Lớp ${grade})`;
+  document.getElementById('topicActionBox').style.display='block';
+  document.getElementById('topicActionBox').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function topicGoQuiz(){
+  if(!selectedTopic)return;
+  document.getElementById('qSubject').value=selectedTopic.sub;
+  document.getElementById('qGrade').value=selectedTopic.grade;
+  document.getElementById('qTopic').value=selectedTopic.name;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[data-tab="tabQuiz"]').classList.add('active');
+  document.getElementById('tabQuiz').classList.add('active');
+  SFX.start();toast('Đã chọn chủ đề',selectedTopic.name,'success');
+}
+function topicGoFlash(){
+  if(!selectedTopic)return;
+  document.getElementById('fcSubject').value=selectedTopic.sub;
+  document.getElementById('fcGrade').value=selectedTopic.grade;
+  document.getElementById('fcTopic').value=selectedTopic.name;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[data-tab="tabFlash"]').classList.add('active');
+  document.getElementById('tabFlash').classList.add('active');
+  SFX.start();toast('Đã chọn chủ đề',selectedTopic.name,'success');
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function renderStats(){
+  const s=ST.stats,acc=s.totalQ>0?Math.round(s.correctQ/s.totalQ*100):0;
+  document.getElementById('statsGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-n">${s.sessions}</div><div class="stat-lbl">📝 Bài làm</div></div>
+    <div class="stat-card"><div class="stat-n">${s.totalQ}</div><div class="stat-lbl">❓ Câu hỏi</div></div>
+    <div class="stat-card"><div class="stat-n">${s.correctQ}</div><div class="stat-lbl">✅ Câu đúng</div></div>
+    <div class="stat-card"><div class="stat-n">${acc}%</div><div class="stat-lbl">🎯 Chính xác</div></div>
+    <div class="stat-card"><div class="stat-n">${s.fcLearned}</div><div class="stat-lbl">🎴 Flashcard</div></div>`;
+  const achievements=[];
+  if(s.sessions>=1)achievements.push({icon:'🎯',name:'Người học đầu tiên',desc:'Hoàn thành bài đầu tiên'});
+  if(s.totalQ>=50)achievements.push({icon:'💯',name:'Học giả',desc:'Làm 50+ câu hỏi'});
+  if(acc>=90&&s.totalQ>=10)achievements.push({icon:'🌟',name:'Xuất sắc',desc:'Chính xác ≥ 90%'});
+  if(s.sessions>=10)achievements.push({icon:'🏆',name:'Chiến binh',desc:'10+ bài làm'});
+  if(s.fcLearned>=30)achievements.push({icon:'🎴',name:'Bậc thầy FC',desc:'30+ flashcards'});
+  document.getElementById('achievementList').innerHTML=achievements.length?
+    achievements.map(a=>`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)"><span style="font-size:1.5rem">${a.icon}</span><div><div style="font-weight:700">${a.name}</div><div style="font-size:.8rem;color:var(--text2)">${a.desc}</div></div></div>`).join(''):
+    '<div class="text-muted" style="padding:10px">Chưa có thành tích. Hãy bắt đầu học!</div>';
+  document.getElementById('historyList').innerHTML=s.history.length?
+    `<table style="width:100%;border-collapse:collapse;font-size:.85rem"><thead><tr style="border-bottom:2px solid var(--border)">
+      <th style="padding:8px;text-align:left;color:var(--text2)">Ngày</th><th style="text-align:left;color:var(--text2)">Bài</th>
+      <th style="text-align:center;color:var(--text2)">KQ</th><th style="text-align:center;color:var(--text2)">%</th></tr></thead>
+    <tbody>${s.history.map(h=>`<tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px;color:var(--text2)">${h.date}</td><td style="padding:8px">${h.title}</td>
+      <td style="padding:8px;text-align:center">${h.correct}/${h.total}</td>
+      <td style="padding:8px;text-align:center"><span class="badge ${h.pct>=70?'badge-green':'badge-red'}">${h.pct}%</span></td></tr>`).join('')}</tbody></table>`:
+    '<div class="text-muted" style="padding:10px">Chưa có lịch sử.</div>';
+}
+function confirmResetStats(){
+  if(confirm('Xóa toàn bộ thống kê?')){ST.stats={totalQ:0,correctQ:0,sessions:0,fcLearned:0,history:[],achievements:[]};saveAll();renderStats();toast('Đã xóa','','info')}
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+function renderHome(){
+  const s=ST.stats,acc=s.totalQ>0?Math.round(s.correctQ/s.totalQ*100):0;
+  document.getElementById('homeStats').innerHTML=`
+    <div class="stat-card"><div class="stat-n">${s.sessions}</div><div class="stat-lbl">Bài làm</div></div>
+    <div class="stat-card"><div class="stat-n">${acc}%</div><div class="stat-lbl">Chính xác</div></div>
+    <div class="stat-card"><div class="stat-n">${s.fcLearned}</div><div class="stat-lbl">Flashcard</div></div>
+    <div class="stat-card"><div class="stat-n">${s.totalQ}</div><div class="stat-lbl">Câu hỏi</div></div>`;
+  const allTopics=[...TOPIC_DATA.k2_toan,...TOPIC_DATA.k3_toan,...TOPIC_DATA.k2_viet_anh,...TOPIC_DATA.k3_viet_anh].slice(0,8);
+  document.getElementById('quickTopics').innerHTML=allTopics.map(t=>`
+    <div class="topic-card" onclick="quickStart('${t.sub}','${t.grade}','${t.name.replace(/'/g,"\\'")}')">
+      <div class="tc-icon">${t.icon}</div><div class="tc-name">${t.name}</div><div class="tc-grade">${t.sub} · Lớp ${t.grade}</div></div>`).join('');
+  const prov=PROVIDERS[ST.provider],hasKey=ST.apiKeys.filter(k=>k.provider===ST.provider&&k.key.trim()).length;
+  document.getElementById('homeProviderInfo').innerHTML=`
+    <div class="flex-between flex-wrap" style="gap:12px"><div>
+      <div style="font-size:1.1rem;font-weight:700">${prov.emoji} ${prov.name}</div>
+      <div style="color:var(--text2);font-size:.85rem;margin-top:4px">Model: <code>${ST.model}</code></div>
+      <div style="margin-top:8px"><span class="badge ${hasKey?'badge-green':'badge-red'}">${hasKey?`${hasKey} key đã cấu hình`:'⚠️ Chưa có API key'}</span></div>
+    </div><button class="btn btn-secondary btn-sm" onclick="openSettings()">⚙️ Thay đổi</button></div>
+    ${!hasKey?'<div class="alert alert-warn" style="margin-top:12px">⚠️ Cần thêm API key để dùng AI. Nhấn ⚙️ Cài đặt.</div>':''}`;
+}
+function quickStart(sub,grade,name){
+  SFX.start();
+  document.getElementById('qSubject').value=sub;document.getElementById('qGrade').value=grade;document.getElementById('qTopic').value=name;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[data-tab="tabQuiz"]').classList.add('active');
+  document.getElementById('tabQuiz').classList.add('active');
+}
+
+// ══════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════
+function exportQuiz(fmt){
+  const q=ST.quiz;if(!q){toast('Lỗi','Không có bài','error');return;}SFX.click();
+  const correct=q.questions.filter((item,i)=>q.answers[i]===item.correct).length;
+  const pct=Math.round(correct/q.questions.length*100),letters=['A','B','C','D'];
+  if(fmt==='md'){let md=`# ${q.title}\n\n**Môn:** ${q.subject} | **Lớp:** ${q.grade} | **Điểm:** ${correct}/${q.questions.length} (${pct}%)\n\n---\n\n`;
+    q.questions.forEach((item,i)=>{const ok=q.answers[i]===item.correct;
+      md+=`### Câu ${i+1} ${ok?'✅':'❌'}: ${item.question}\n\n`;
+      item.options.forEach((o,oi)=>md+=`- ${letters[oi]}. ${o}${oi===item.correct?' **(Đúng)**':''}\n`);
+      if(item.explanation)md+=`\n> 💡 ${item.explanation}\n`;md+='\n'});
+    download(md,'quiz-result.md','text/markdown');}
+  else if(fmt==='html'){
+    const html=`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${q.title}</title><style>body{font-family:system-ui;max-width:800px;margin:40px auto;padding:20px;color:#1a1a2e;line-height:1.6}h1{color:#00c896}h3{color:#2c3e50;border-left:4px solid #00c896;padding-left:12px}.ok{color:#27ae60}.fail{color:#e74c3c}.explain{background:#f0fff4;border-left:4px solid #27ae60;padding:10px 14px;margin:8px 0;border-radius:4px}.opt{padding:6px 10px;margin:4px 0;border-radius:6px;background:#f5f5f5}.correct-opt{background:#d4edda;color:#155724;font-weight:700}.wrong-opt{background:#f8d7da;color:#721c24;text-decoration:line-through}</style></head><body><h1>${q.title}</h1>${q.questions.map((item,i)=>{const ok=q.answers[i]===item.correct;return `<h3>${ok?'✅':'❌'} Câu ${i+1}: ${item.question}</h3><div>${item.options.map((o,oi)=>`<div class="opt ${oi===item.correct?'correct-opt':oi===q.answers[i]&&!ok?'wrong-opt':''}">${letters[oi]}. ${o}</div>`).join('')}</div>${item.explanation?`<div class="explain">💡 ${item.explanation}</div>`:''}`}).join('\n')}<footer style="margin-top:30px;color:#999;font-size:.8rem;border-top:1px solid #eee;padding-top:16px">SkillupEdu AI · ${new Date().toLocaleDateString('vi')}</footer></body></html>`;
+    download(html,'quiz-result.html','text/html');}
+  else if(fmt==='pdf'){const w=window.open('','_blank');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${q.title}</title><style>body{font-family:Arial;margin:30px;line-height:1.5}@media print{button{display:none}}</style></head><body><h1>${q.title}</h1><button onclick="window.print()">🖨️ In</button>${q.questions.map((item,i)=>`<p><strong>Câu ${i+1}:</strong> ${item.question}</p><ul>${item.options.map((o,oi)=>`<li>${o}${oi===item.correct?' ✓':''}</li>`).join('')}</ul>${item.explanation?`<p><em>💡 ${item.explanation}</em></p>`:''}`).join('<hr>')}</body></html>`);
+    w.document.close();setTimeout(()=>w.print(),500)}
+}
+function exportFlash(fmt){
+  const f=ST.flash;if(!f){toast('Lỗi','Không có flashcard','error');return;}SFX.click();
+  if(fmt==='md'){let md=`# ${f.title}\n\n**Môn:** ${f.subject} | **Lớp:** ${f.grade} | **Số thẻ:** ${f.cards.length}\n\n---\n\n`;
+    f.cards.forEach((c,i)=>{md+=`## Thẻ ${i+1} ${c.icon||''}\n\n**Câu hỏi:** ${c.front}\n\n**Trả lời:** ${c.back}\n${c.hint?`\n> 💡 ${c.hint}\n`:''}\n`});
+    download(md,'flashcards.md','text/markdown');}
+  else if(fmt==='html'){
+    const html=`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${f.title}</title><style>body{font-family:system-ui;max-width:900px;margin:40px auto;padding:20px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}.card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:12px;padding:24px;cursor:pointer;min-height:180px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.card .icon{font-size:2.5rem;margin-bottom:12px}.card .front{font-size:1.1rem;font-weight:700}.card .back{display:none;margin-top:10px;font-size:.95rem;opacity:.9}.card.show .back{display:block}.card.show .front{opacity:.7}h1{background:linear-gradient(90deg,#00c896,#007cf0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}</style></head><body><h1>🎴 ${f.title}</h1><p>Click vào thẻ để lật · ${f.cards.length} thẻ</p><div class="grid">${f.cards.map(c=>`<div class="card" onclick="this.classList.toggle('show')"><div class="icon">${c.icon||'❓'}</div><div class="front">${c.front}</div><div class="back">✅ ${c.back}${c.hint?`<br><small>💡 ${c.hint}</small>`:''}</div></div>`).join('')}</div><footer style="margin-top:30px;color:#999;font-size:.8rem">SkillupEdu AI · ${new Date().toLocaleDateString('vi')}</footer></body></html>`;
+    download(html,'flashcards.html','text/html');}
+  else if(fmt==='pdf'){const w=window.open('','_blank');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${f.title}</title><style>body{font-family:Arial;margin:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:10px}th{background:#f0f0f0}@media print{button{display:none}}</style></head><body><h1>${f.title}</h1><button onclick="window.print()">🖨️ In</button><table><tr><th>#</th><th>Câu hỏi</th><th>Trả lời</th></tr>${f.cards.map((c,i)=>`<tr><td>${i+1} ${c.icon||''}</td><td>${c.front}</td><td>${c.back}</td></tr>`).join('')}</table></body></html>`);
+    w.document.close();setTimeout(()=>w.print(),500)}
+}
+function download(content,filename,type){
+  const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);toast('Đã tải',filename,'success');
+}
+
+// ══════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════
+function shuffle(arr){
+  const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init(){
+  loadAll(); renderTopics(); renderHome(); renderStats();
+  document.getElementById('setProvider').value=ST.provider;
+  renderModelSelect(ST.provider);
+  if(ST.model)document.getElementById('setModel').value=ST.model;
+  document.getElementById('soundToggle').textContent=ST.soundEnabled?'🔊':'🔇';
+  const dz=document.getElementById('dropZone');
+  if(dz){
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+    dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleFiles({target:{files:e.dataTransfer.files}})});
+  }
+  const srcTab=document.querySelector(`.source-tab[data-src="${ST.sourceType}"]`);
+  if(srcTab)switchSource(srcTab,ST.sourceType);
+  setTimeout(()=>{if(ST.soundEnabled)SFX.start()},600);
+  if(!ST.apiKeys.filter(k=>k.key.trim()).length){
+    setTimeout(()=>toast('👋 Chào mừng!','Vào ⚙️ Cài đặt để thêm API key bắt đầu học với AI','info',6000),1200);
+  }
+}
+// Cảnh báo nếu đang chạy từ file://
+if(window.location.protocol === 'file:'){
+  window.addEventListener('load', ()=>{
+    setTimeout(()=>{
+      const warn = document.createElement('div');
+      warn.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#ff6b35,#f7c948);color:#1a1a2e;padding:12px 20px;font-size:14px;font-weight:600;text-align:center;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.3)';
+      warn.innerHTML = '⚠️ Đang chạy từ file:// — một số tính năng (tìm web, fetch URL) có thể bị chặn. <u>Click để xem cách sửa</u>';
+      warn.onclick = ()=>{
+        alert('CÁCH SỬA:\\n\\n1. Mở Command Prompt (Win+R → cmd)\\n2. Gõ: cd /d ' + window.location.pathname.replace(/\/[^/]*$/, '').replace(/^\//,'') + '\\n3. Gõ: python -m http.server 8080\\n4. Mở trình duyệt: http://localhost:8080/' + window.location.pathname.split('/').pop() + '\\n\\nHoặc cài VS Code → extension Live Server → Click phải file → Open with Live Server');
+        warn.remove();
+      };
+      document.body.prepend(warn);
+    }, 1500);
+  });
+}
+// ══════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════
+document.addEventListener('keydown', function(e){
+  if(['INPUT','TEXTAREA','SELECT'].indexOf(document.activeElement.tagName)!==-1) return;
+  var q = ST.quiz;
+  var f = ST.flash;
+  if(q && !document.getElementById('quizPlay').classList.contains('hidden')){
+    if(e.key>='1' && e.key<='4'){
+      var idx2 = parseInt(e.key)-1;
+      var opts = document.querySelectorAll('.q-opt:not(.disabled)');
+      if(opts[idx2]) opts[idx2].click();
+    }
+    if(e.key==='Enter'){
+      var btn = document.getElementById('btnNext');
+      if(btn && !btn.classList.contains('hidden')) btn.click();
+    }
+  }
+  if(f && !document.getElementById('flashPlay').classList.contains('hidden')){
+    if(e.key===' '||e.key==='Enter'){e.preventDefault();flipCard();}
+    if(e.key==='ArrowLeft') fcNav(-1);
+    if(e.key==='ArrowRight') fcNav(1);
+  }
+});
+
+document.addEventListener('keydown',function(e){
+  if(['INPUT','TEXTAREA','SELECT'].indexOf(document.activeElement.tagName)!==-1)return;
+  if(ST.quiz&&!document.getElementById('quizPlay').classList.contains('hidden')){
+    if(e.key>='1'&&e.key<='4'){var opts=document.querySelectorAll('.q-opt:not(.disabled)');if(opts[parseInt(e.key)-1])opts[parseInt(e.key)-1].click()}
+    if(e.key==='Enter'){var btn=document.getElementById('btnNext');if(btn&&!btn.classList.contains('hidden'))btn.click()}
+  }
+  if(ST.flash&&!document.getElementById('flashPlay').classList.contains('hidden')){
+    if(e.key===' '||e.key==='Enter'){e.preventDefault();flipCard()}
+    if(e.key==='ArrowLeft')fcNav(-1);
+    if(e.key==='ArrowRight')fcNav(1);
+  }
+});
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
