@@ -2888,7 +2888,7 @@ function buildQuizPrompt(overrideCount){
     difficultyLine = '- Độ khó: ' + (diffMap[diff] || 'tăng dần');
   }
 
-  return 'Bạn là chuyên gia giáo dục Việt Nam.' + contextBlock + '\n'
+  return 'Bạn là chuyên gia giáo dục Việt Nam trên 20 năm kinh nghiệm.' + contextBlock + '\n'
     + 'Tạo CHÍNH XÁC ' + count + ' câu hỏi trắc nghiệm cho:\n'
     + '- Môn: ' + subject + '\n'
     + '- Lớp: ' + grade + '\n'
@@ -2897,7 +2897,7 @@ function buildQuizPrompt(overrideCount){
     + difficultyLine + '\n'
     + (hasEmoji ? '- Thêm 1 emoji phù hợp (icon field)' : '- icon: "❓"') + '\n'
     + (hasExplain ? '- Viết giải thích ngắn gọn cho lớp '+grade : '- explanation: ""') + '\n'
-    + '\nTRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, KHÔNG text ngoài JSON:\n'
+    + '\nTRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, Mỗi câu hỏi phải có 4 lựa chọn (A, B, C, D) hoàn toàn khác biệt về nội dung,KHÔNG ĐƯỢC lặp lại cùng một từ hoặc cùng một nội dung trong các phương án của cùng một câu hỏi, KHÔNG text ngoài JSON:\n'
     + '{"title":"Tên bộ câu hỏi","subject":"'+subject+'","grade":"'+grade+'","questions":[{"id":1,"icon":"emoji","question":"Câu hỏi","options":["A","B","C","D"],"correct":0,"explanation":"Giải thích"}]}\n'
     + 'Lưu ý: "correct" là INDEX (0-3) của đáp án đúng.';
 }
