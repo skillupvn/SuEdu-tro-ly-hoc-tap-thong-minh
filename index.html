@@ -1006,6 +1006,10 @@ code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:.85em;fon
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn btn-sm" onclick="smartPick('free')" title="Hoàn toàn miễn phí">🆓 Free tốt nhất</button>
+        <button class="btn btn-sm" onclick="smartPick('cheap')" title="Trả phí rẻ nhất">💰 Rẻ nhất</button>
+        <button class="btn btn-sm" onclick="smartPick('best')" title="Mạnh nhất">🏆 Mạnh nhất</button>
+
         <button class="btn btn-secondary btn-sm" onclick="fetchModels()">🔄 Cập nhật models mới nhất</button>
         <span id="modelUpdateStatus" style="font-size:.8rem;color:var(--text2)"></span>
       </div>
@@ -1057,22 +1061,17 @@ code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:.85em;fon
 <div class="modal-overlay hidden" id="promptModal" onclick="closeModalOut(event,'promptModal')">
   <div class="modal" style="max-width:760px">
     <div class="modal-header">
-      <div class="modal-title">👁️ Prompt sẽ gửi cho AI (có thể chỉnh sửa tự do)</div>
+      <div class="modal-title">👁️ Prompt sẽ gửi cho AI (có thể chỉnh sửa)</div>
       <button class="btn btn-icon btn-sm" onclick="closeModal('promptModal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="alert alert-info" style="margin-bottom:10px">✏️ Bạn có thể chỉnh sửa Prompt bên dưới <strong>không giới hạn ký tự</strong>. Sau khi bấm "💾 Lưu Prompt", lần "Tạo bài trắc nghiệm" tiếp theo sẽ dùng đúng nội dung bạn đã chỉnh.</div>
-      <textarea id="promptPreviewText"
-        style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;line-height:1.6;color:var(--text);min-height:50vh;max-height:65vh;resize:vertical;font-family:'Segoe UI',monospace;white-space:pre-wrap;overflow-y:auto"
-        spellcheck="false"
-        placeholder="Prompt sẽ hiển thị ở đây..."></textarea>
-      <div id="promptSavedHint" class="text-muted" style="font-size:.78rem;margin-top:6px">💡 Mở popup này nhiều lần → hệ thống sẽ tự build lại prompt từ dữ liệu mới nhất. Đã chỉnh sửa? Nhớ bấm "💾 Lưu Prompt" để áp dụng.</div>
+      <div class="alert alert-info" style="font-size:.82rem">💡 Bạn có thể chỉnh sửa prompt bên dưới (không giới hạn ký tự). Bấm <b>💾 Lưu prompt tùy chỉnh</b> để dùng nguyên văn khi tạo bài.</div>
+      <textarea id="promptPreviewText" style="width:100%;min-height:340px;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:monospace;font-size:.85rem;line-height:1.6;color:var(--text);resize:vertical"></textarea>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary btn-sm" onclick="resetCustomPrompt()" title="Khôi phục prompt mặc định">🔄 Khôi phục mặc định</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetCustomPrompt()">🔄 Khôi phục mặc định</button>
       <button class="btn btn-secondary btn-sm" onclick="copyPrompt()">📋 Copy</button>
-      <button class="btn btn-primary btn-sm" onclick="saveCustomPrompt()">💾 Lưu Prompt</button>
-      <button class="btn btn-secondary btn-sm" onclick="closeModal('promptModal')">Đóng</button>
+      <button class="btn btn-primary btn-sm" onclick="saveCustomPrompt()">💾 Lưu prompt tùy chỉnh</button>
     </div>
   </div>
 </div>
@@ -1107,14 +1106,13 @@ code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:.85em;fon
 const PROVIDERS = {
   gemini:{
     name:'Google Gemini',emoji:'💎',
-    tier:'free', // NEW v2: đánh dấu tier để auto-select
+    tier:'free',
     models:[
-      {id:'gemini-2.5-pro-preview-03-25',name:'Gemini 2.5 Pro Preview',tag:'🏆 Mạnh nhất',cost:0},
-      {id:'gemini-2.5-flash-preview-04-17',name:'Gemini 2.5 Flash Preview',tag:'⚡ Nhanh+Rẻ',cost:0},
-      {id:'gemini-2.0-flash',name:'Gemini 2.0 Flash',tag:'🔥 Phổ biến',cost:0},
-      {id:'gemini-2.0-flash-lite',name:'Gemini 2.0 Flash Lite',tag:'💰 Rẻ nhất',cost:0},
-      {id:'gemini-1.5-pro',name:'Gemini 1.5 Pro',tag:'Pro',cost:0},
-      {id:'gemini-1.5-flash',name:'Gemini 1.5 Flash',tag:'Flash',cost:0},
+      {id:'gemini-2.5-flash',name:'Gemini 2.5 Flash',tag:'⚡ Free · Khuyên dùng',cost:0},
+      {id:'gemini-2.5-flash-lite',name:'Gemini 2.5 Flash-Lite',tag:'🪶 Free · Nhẹ nhất',cost:0},
+      {id:'gemini-2.0-flash',name:'Gemini 2.0 Flash',tag:'🔥 Free · Phổ biến',cost:0},
+      {id:'gemini-2.0-flash-lite',name:'Gemini 2.0 Flash-Lite',tag:'💰 Free · Rẻ',cost:0},
+      {id:'gemini-2.5-pro',name:'Gemini 2.5 Pro',tag:'🏆 Mạnh nhất · 50/ngày',cost:1.25},
     ],
     endpoint:function(m,k){return 'https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+k},
     buildBody:function(messages,temp,model){
@@ -1130,10 +1128,10 @@ const PROVIDERS = {
     name:'OpenAI',emoji:'🟢',
     tier:'paid',
     models:[
-      {id:'gpt-4o',name:'GPT-4o',tag:'🏆 Tốt nhất',cost:3},
-      {id:'gpt-4o-mini',name:'GPT-4o Mini',tag:'⚡ Nhanh',cost:1},
-      {id:'gpt-4-turbo',name:'GPT-4 Turbo',tag:'Turbo',cost:2},
-      {id:'gpt-3.5-turbo',name:'GPT-3.5 Turbo',tag:'💰 Rẻ',cost:0.5},
+      {id:'gpt-4o-mini',name:'GPT-4o Mini',tag:'⚡ Cân bằng · $0.15/1M',cost:0.15},
+      {id:'gpt-4.1-nano',name:'GPT-4.1 Nano',tag:'🪶 Rẻ nhất · $0.10/1M',cost:0.10},
+      {id:'gpt-4o',name:'GPT-4o',tag:'🏆 Mạnh · $2.50/1M',cost:2.5},
+      {id:'gpt-3.5-turbo',name:'GPT-3.5 Turbo',tag:'💰 Cũ',cost:0.5},
     ],
     endpoint:function(){return 'https://api.openai.com/v1/chat/completions'},
     buildBody:function(messages,temp,model){return {model:model,messages:messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}},
@@ -1144,9 +1142,9 @@ const PROVIDERS = {
     name:'Mistral AI',emoji:'🌊',
     tier:'paid',
     models:[
-      {id:'mistral-large-latest',name:'Mistral Large',tag:'🏆 Tốt nhất',cost:2},
-      {id:'mistral-medium-latest',name:'Mistral Medium',tag:'Vừa',cost:1},
-      {id:'mistral-small-latest',name:'Mistral Small',tag:'⚡ Nhanh',cost:0.5},
+      {id:'mistral-small-latest',name:'Mistral Small',tag:'⚡ Free tier',cost:0},
+      {id:'mistral-medium-latest',name:'Mistral Medium',tag:'🎯 $0.40/1M',cost:0.4},
+      {id:'mistral-large-latest',name:'Mistral Large',tag:'🏆 $2/1M',cost:2},
       {id:'open-mixtral-8x22b',name:'Mixtral 8x22B',tag:'Mạnh',cost:1},
     ],
     endpoint:function(){return 'https://api.mistral.ai/v1/chat/completions'},
@@ -1158,8 +1156,8 @@ const PROVIDERS = {
     name:'DeepSeek',emoji:'🔵',
     tier:'cheap',
     models:[
-      {id:'deepseek-chat',name:'DeepSeek Chat',tag:'V3 · 💰 Rất rẻ',cost:0.1},
-      {id:'deepseek-reasoner',name:'DeepSeek Reasoner',tag:'R1 · Suy luận',cost:0.3},
+      {id:'deepseek-chat',name:'DeepSeek V3.2 Chat',tag:'💰 $0.14/1M · Rẻ nhất',cost:0.14},
+      {id:'deepseek-reasoner',name:'DeepSeek R1',tag:'🧠 $0.55/1M · Lý luận',cost:0.55},
     ],
     endpoint:function(){return 'https://api.deepseek.com/v1/chat/completions'},
     buildBody:function(messages,temp,model){return {model:model,messages:messages,temperature:parseFloat(temp)||0.7,max_tokens:8192}},
@@ -1170,13 +1168,14 @@ const PROVIDERS = {
     name:'OpenRouter',emoji:'🔀',
     tier:'mixed',
     models:[
-      {id:'meta-llama/llama-3.3-70b-instruct:free',name:'Llama 3.3 70B',tag:'🆓 Miễn phí',cost:0},
-      {id:'google/gemma-4-27b-it:free',name:'Gemma 4 27B',tag:'🆓 Google',cost:0},
-      {id:'nvidia/llama-3.1-nemotron-70b-instruct:free',name:'Nemotron 70B',tag:'🆓 NVIDIA',cost:0},
-      {id:'qwen/qwen3-coder:free',name:'Qwen3 Coder',tag:'🆓 Code',cost:0},
-      {id:'google/gemma-3-27b-it:free',name:'Gemma 3 27B',tag:'🆓 Nhẹ',cost:0},
-      {id:'openrouter/auto',name:'Auto Router',tag:'🔄 Auto chọn',cost:0},
-      {id:'deepseek/deepseek-chat',name:'DeepSeek V3',tag:'💰 Rẻ',cost:0.1},
+      {id:'deepseek/deepseek-chat-v3.1:free',name:'DeepSeek V3.1',tag:'🆓 Free · Tốt nhất',cost:0},
+      {id:'deepseek/deepseek-r1:free',name:'DeepSeek R1',tag:'🆓 Free · Reasoning',cost:0},
+      {id:'meta-llama/llama-3.3-70b-instruct:free',name:'Llama 3.3 70B',tag:'🆓 Free',cost:0},
+      {id:'qwen/qwen3-coder:free',name:'Qwen3 Coder',tag:'🆓 Free · Code',cost:0},
+      {id:'google/gemini-2.0-flash-exp:free',name:'Gemini 2.0 Flash',tag:'🆓 Free',cost:0},
+      {id:'mistralai/mistral-small-3.2-24b-instruct:free',name:'Mistral Small 3.2',tag:'🆓 Free',cost:0},
+      {id:'openrouter/auto',name:'Auto Router',tag:'🔄 Auto',cost:0},
+      {id:'deepseek/deepseek-chat',name:'DeepSeek V3 (paid)',tag:'💰 Rẻ',cost:0.1},
       {id:'anthropic/claude-3.5-sonnet',name:'Claude 3.5 Sonnet',tag:'💎 Premium',cost:3},
       {id:'openai/gpt-4o',name:'GPT-4o',tag:'💎 Premium',cost:3},
     ],
@@ -1189,10 +1188,13 @@ const PROVIDERS = {
     name:'Groq (Miễn phí)',emoji:'⚡',
     tier:'free',
     models:[
-      {id:'llama-3.3-70b-versatile',name:'Llama 3.3 70B',tag:'🏆 Mạnh+Nhanh',cost:0},
-      {id:'llama-3.1-8b-instant',name:'Llama 3.1 8B',tag:'⚡ Siêu nhanh',cost:0},
-      {id:'gemma2-9b-it',name:'Gemma 2 9B',tag:'Google',cost:0},
-      {id:'mixtral-8x7b-32768',name:'Mixtral 8x7B',tag:'Mistral',cost:0},
+      {id:'llama-3.3-70b-versatile',name:'Llama 3.3 70B',tag:'🏆 Free · Mạnh nhất',cost:0},
+      {id:'llama-3.1-8b-instant',name:'Llama 3.1 8B Instant',tag:'⚡ Free · Siêu nhanh',cost:0},
+      {id:'meta-llama/llama-4-scout-17b-16e-instruct',name:'Llama 4 Scout 17B',tag:'🆕 Free · Mới nhất',cost:0},
+      {id:'meta-llama/llama-4-maverick-17b-128e-instruct',name:'Llama 4 Maverick',tag:'🚀 Free · Mới',cost:0},
+      {id:'qwen/qwen3-32b',name:'Qwen 3 32B',tag:'🧠 Free · Reasoning',cost:0},
+      {id:'deepseek-r1-distill-llama-70b',name:'DeepSeek R1 70B',tag:'🔬 Free · Reasoning',cost:0},
+      {id:'gemma2-9b-it',name:'Gemma 2 9B',tag:'Free · Google',cost:0},
     ],
     endpoint:function(){return 'https://api.groq.com/openai/v1/chat/completions'},
     buildBody:function(messages,temp,model){return {model:model||'llama-3.3-70b-versatile',messages:messages,temperature:parseFloat(temp)||0.7,max_tokens:4096}},
@@ -1200,6 +1202,7 @@ const PROVIDERS = {
     authHeader:function(k){return {'Authorization':'Bearer '+k}},
   },
 };
+
 
 // ══════════════════════════════════════════
 // TOPIC DATA — GIỮ NGUYÊN 100% GỐC
@@ -1580,14 +1583,21 @@ function checkFcBatch(){
 // Ưu tiên: free keys OK → cheap keys OK → paid keys OK
 // ══════════════════════════════════════════
 var AUTO_SELECT_PRIORITY = [
-  // tier, provider, model — ưu tiên từ trên xuống
+  // ─── FREE: ưu tiên Groq (không giới hạn ngày) > OpenRouter free > Gemini free ───
   {tier:'free',  provider:'groq',       model:'llama-3.3-70b-versatile'},
-  {tier:'free',  provider:'gemini',     model:'gemini-2.0-flash'},
+  {tier:'free',  provider:'groq',       model:'meta-llama/llama-4-scout-17b-16e-instruct'},
+  {tier:'free',  provider:'openrouter', model:'deepseek/deepseek-chat-v3.1:free'},
   {tier:'free',  provider:'openrouter', model:'meta-llama/llama-3.3-70b-instruct:free'},
-  {tier:'free',  provider:'openrouter', model:'google/gemma-4-27b-it:free'},
+  {tier:'free',  provider:'gemini',     model:'gemini-2.5-flash-lite'},
+  {tier:'free',  provider:'gemini',     model:'gemini-2.5-flash'},
+  {tier:'free',  provider:'gemini',     model:'gemini-2.0-flash'},
+  {tier:'free',  provider:'mistral',    model:'mistral-small-latest'},
+  // ─── CHEAP: trả phí cực rẻ ───
   {tier:'cheap', provider:'deepseek',   model:'deepseek-chat'},
-  {tier:'cheap', provider:'gemini',     model:'gemini-2.5-flash-preview-04-17'},
-  {tier:'paid',  provider:'openai',     model:'gpt-4o-mini'},
+  {tier:'cheap', provider:'openai',     model:'gpt-4.1-nano'},
+  {tier:'cheap', provider:'openai',     model:'gpt-4o-mini'},
+  // ─── PAID: cao cấp ───
+  {tier:'paid',  provider:'gemini',     model:'gemini-2.5-pro'},
   {tier:'paid',  provider:'mistral',    model:'mistral-small-latest'},
   {tier:'paid',  provider:'openai',     model:'gpt-4o'},
 ];
@@ -1823,33 +1833,161 @@ async function testKey(i){
       } else if(r.status===400||r.status===403){
         ST.apiKeys[i].quota='❌ Key không hợp lệ';
       }
-    }else{
-      const cheapModel=prov.models[prov.models.length-1]?.id||prov.models[0]?.id;
-      const ep=prov.endpoint(cheapModel,k.key);
-      const testBody=prov.buildBody([{role:'user',content:'hi'}],'0.1',cheapModel);
-      testBody.max_tokens=3;
-      const headers={'Content-Type':'application/json'};
-      if(prov.authHeader)Object.assign(headers,prov.authHeader(k.key));
-      const controller=new AbortController();
-      const timeout=setTimeout(()=>controller.abort(),15000);
+        }else if(k.provider==='groq'){
+      // ═══ FIX v3: Groq — dùng /models endpoint (chỉ cần GET, không tốn token) ═══
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),12000);
       try{
-        const r=await fetch(ep,{method:'POST',headers,body:JSON.stringify(testBody),signal:controller.signal});
+        const r=await fetch('https://api.groq.com/openai/v1/models',{
+          headers:{'Authorization':'Bearer '+k.key},
+          signal:ctrl.signal
+        });
         clearTimeout(timeout);
-        if(r.ok){ok=true;ST.apiKeys[i].quota='✅ Hoạt động'}
-        else if(r.status===401||r.status===403){ok=false;ST.apiKeys[i].quota='❌ Key sai/hết hạn'}
-        else if(r.status===402){ok=true;ST.apiKeys[i].quota='⚠️ Ít credit'}
-        else if(r.status===429){ok=true;ST.apiKeys[i].quota='⚠️ Rate limited'}
-        else{ok=false;ST.apiKeys[i].quota=`❌ HTTP ${r.status}`}
+        if(r.ok){
+          const d=await r.json();
+          const cnt=(d.data||[]).filter(m=>m.active!==false).length;
+          ok=true;
+          ST.apiKeys[i].quota='✅ '+cnt+' models';
+        } else if(r.status===401){
+          ok=false; ST.apiKeys[i].quota='❌ Key sai';
+        } else if(r.status===403){
+          ok=false; ST.apiKeys[i].quota='❌ Key bị từ chối';
+        } else if(r.status===429){
+          ok=true; ST.apiKeys[i].quota='⚠️ Rate limited';
+        } else {
+          ok=false; ST.apiKeys[i].quota='❌ HTTP '+r.status;
+        }
       }catch(fetchErr){
         clearTimeout(timeout);
         if(fetchErr.name==='AbortError'){
-          ST.apiKeys[i].status='fail';ST.apiKeys[i].quota='⏱️ Timeout';
-          toast('⏱️ Timeout',`${prov.name} không phản hồi (15s)`,'warn');
-          renderApiKeyList();saveAll();return;
+          ST.apiKeys[i].status='fail'; ST.apiKeys[i].quota='⏱️ Timeout';
+          toast('⏱️ Timeout','Groq không phản hồi (12s)','warn');
+          renderApiKeyList(); saveAll(); return;
+        }
+        throw fetchErr;
+      }
+    }else if(k.provider==='openrouter'){
+      // ═══ FIX v3: OpenRouter — dùng /models (free, không tốn credit) ═══
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),12000);
+      try{
+        const r=await fetch('https://openrouter.ai/api/v1/models',{
+          headers:{'Authorization':'Bearer '+k.key},
+          signal:ctrl.signal
+        });
+        clearTimeout(timeout);
+        if(r.ok){
+          const d=await r.json();
+          ok=true;
+          ST.apiKeys[i].quota='✅ '+(d.data||[]).length+' models';
+        } else if(r.status===401||r.status===403){
+          ok=false; ST.apiKeys[i].quota='❌ Key sai/hết hạn';
+        } else {
+          ok=false; ST.apiKeys[i].quota='❌ HTTP '+r.status;
+        }
+      }catch(fetchErr){
+        clearTimeout(timeout);
+        if(fetchErr.name==='AbortError'){
+          ST.apiKeys[i].status='fail'; ST.apiKeys[i].quota='⏱️ Timeout';
+          renderApiKeyList(); saveAll(); return;
+        }
+        throw fetchErr;
+      }
+    }else if(k.provider==='openai'){
+      // ═══ FIX v3: OpenAI — dùng /models ═══
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),12000);
+      try{
+        const r=await fetch('https://api.openai.com/v1/models',{
+          headers:{'Authorization':'Bearer '+k.key},
+          signal:ctrl.signal
+        });
+        clearTimeout(timeout);
+        if(r.ok){
+          const d=await r.json();
+          const cnt=(d.data||[]).filter(m=>m.id.startsWith('gpt-')).length;
+          ok=true; ST.apiKeys[i].quota='✅ '+cnt+' GPT models';
+        } else if(r.status===401||r.status===403){
+          ok=false; ST.apiKeys[i].quota='❌ Key sai/hết hạn';
+        } else if(r.status===429){
+          ok=true; ST.apiKeys[i].quota='⚠️ Rate limited';
+        } else {
+          ok=false; ST.apiKeys[i].quota='❌ HTTP '+r.status;
+        }
+      }catch(fetchErr){
+        clearTimeout(timeout);
+        if(fetchErr.name==='AbortError'){
+          ST.apiKeys[i].status='fail'; ST.apiKeys[i].quota='⏱️ Timeout';
+          renderApiKeyList(); saveAll(); return;
+        }
+        throw fetchErr;
+      }
+    }else if(k.provider==='mistral'){
+      // ═══ FIX v3: Mistral — dùng /models ═══
+      const ctrl=new AbortController();
+      const timeout=setTimeout(()=>ctrl.abort(),12000);
+      try{
+        const r=await fetch('https://api.mistral.ai/v1/models',{
+          headers:{'Authorization':'Bearer '+k.key},
+          signal:ctrl.signal
+        });
+        clearTimeout(timeout);
+        if(r.ok){
+          const d=await r.json();
+          ok=true; ST.apiKeys[i].quota='✅ '+(d.data||[]).length+' models';
+        } else if(r.status===401||r.status===403){
+          ok=false; ST.apiKeys[i].quota='❌ Key sai/hết hạn';
+        } else {
+          ok=false; ST.apiKeys[i].quota='❌ HTTP '+r.status;
+        }
+      }catch(fetchErr){
+        clearTimeout(timeout);
+        if(fetchErr.name==='AbortError'){
+          ST.apiKeys[i].status='fail'; ST.apiKeys[i].quota='⏱️ Timeout';
+          renderApiKeyList(); saveAll(); return;
+        }
+        throw fetchErr;
+      }
+    }else{
+      // ═══ FIX v3: DeepSeek + provider khác — fallback dùng chat completion với model hợp lệ ═══
+      // DeepSeek không có /models GET endpoint chuẩn nên phải dùng chat
+      const safeModel = prov.models[0]?.id; // luôn dùng model ĐẦU TIÊN (mới nhất, đảm bảo còn sống)
+      const ep = prov.endpoint(safeModel, k.key);
+      const testBody = prov.buildBody([{role:'user',content:'hi'}], '0.1', safeModel);
+      testBody.max_tokens = 5; // ═══ FIX v3: Tăng từ 3 lên 5 để tránh response rỗng ═══
+      const headers = {'Content-Type':'application/json'};
+      if(prov.authHeader) Object.assign(headers, prov.authHeader(k.key));
+      const ctrl = new AbortController();
+      const timeout = setTimeout(()=>ctrl.abort(), 15000);
+      try{
+        const r = await fetch(ep, {method:'POST', headers, body:JSON.stringify(testBody), signal:ctrl.signal});
+        clearTimeout(timeout);
+        if(r.ok){ ok=true; ST.apiKeys[i].quota='✅ Hoạt động'; }
+        else if(r.status===401||r.status===403){ ok=false; ST.apiKeys[i].quota='❌ Key sai/hết hạn'; }
+        else if(r.status===402){ ok=true; ST.apiKeys[i].quota='⚠️ Ít credit'; }
+        else if(r.status===429){ ok=true; ST.apiKeys[i].quota='⚠️ Rate limited'; }
+        else if(r.status===400){
+          // ═══ FIX v3: 400 thường là model deprecated — vẫn coi key hợp lệ ═══
+          let errMsg='';
+          try{ const ej=await r.json(); errMsg=(ej.error?.message||ej.error?.code||'').toString().toLowerCase(); }catch(_){}
+          if(errMsg.includes('model') || errMsg.includes('decommission')){
+            ok=true; ST.apiKeys[i].quota='⚠️ Model cũ — Key OK';
+          } else {
+            ok=false; ST.apiKeys[i].quota='❌ '+errMsg.slice(0,40);
+          }
+        }
+        else { ok=false; ST.apiKeys[i].quota='❌ HTTP '+r.status; }
+      }catch(fetchErr){
+        clearTimeout(timeout);
+        if(fetchErr.name==='AbortError'){
+          ST.apiKeys[i].status='fail'; ST.apiKeys[i].quota='⏱️ Timeout';
+          toast('⏱️ Timeout', prov.name+' không phản hồi','warn');
+          renderApiKeyList(); saveAll(); return;
         }
         throw fetchErr;
       }
     }
+
     ST.apiKeys[i].status=ok?'ok':'fail';
     // ═══ NEW v2: Clear cooldown khi test ok ═══
     if(ok){ _clearCool(k.key); }
@@ -2167,23 +2305,32 @@ function showModelRecommendation(prov){
   openModal('recModal');
 }
 
-function applyCustomModel(){
-  const input=document.getElementById('customModelInput');
-  const val=input.value.trim();
-  if(!val){toast('Lỗi','Nhập Model ID','warn');return;}
-  const prov=document.getElementById('setProvider').value;
-  const provObj=PROVIDERS[prov];
-  if(provObj){
-    const exists=provObj.models.find(m=>m.id===val);
-    if(!exists){
-      provObj.models.unshift({id:val,name:val,tag:'✏️ Tùy chỉnh'});
-      renderModelSelect(prov);
-    }
-    document.getElementById('setModel').value=val;
+// ═══ NEW v3: Smart Pick — Chọn nhanh provider/model theo mục tiêu ═══
+function smartPick(tier){
+  var presets = {
+    free:  {provider:'groq',     model:'llama-3.3-70b-versatile', hint:'⚡ Groq Llama 3.3 70B — Free, không giới hạn ngày, ~280 tok/s. Lấy key tại console.groq.com'},
+    cheap: {provider:'deepseek', model:'deepseek-chat',           hint:'🔬 DeepSeek V3.2 — $0.14/1M token, rẻ nhất, chất lượng GPT-4 class'},
+    best:  {provider:'gemini',   model:'gemini-2.5-pro',          hint:'💎 Gemini 2.5 Pro — Mạnh nhất, free 50 req/ngày, lý tưởng đề khó'}
+  };
+  var p = presets[tier]; if(!p) return;
+  ST.provider = p.provider;
+  ST.model    = p.model;
+  ST.autoSelect = false; // Tắt auto khi user chủ động chọn
+  document.getElementById('setProvider').value = p.provider;
+  renderModelSelect(p.provider);
+  // Đảm bảo model có trong list (nếu chưa thì thêm)
+  var sel = document.getElementById('setModel');
+  if(!Array.from(sel.options).some(function(o){return o.value===p.model})){
+    var opt=document.createElement('option'); opt.value=p.model; opt.textContent=p.model+' [✏️ Đã chọn]';
+    sel.appendChild(opt);
   }
-  closeModal('recModal');
-  toast('Đã áp dụng',`Model: ${val}`,'success');
+  sel.value = p.model;
+  // Tắt auto-select toggle
+  var autoEl=document.getElementById('tAutoSelect'); if(autoEl) autoEl.classList.remove('on');
+  saveAll();
+  toast('✅ Đã chọn', p.hint, 'success', 5000); SFX.click();
 }
+
 // ═══ FIX v2: saveSettings — Thêm lưu autoSelect ═══
 function saveSettings(){
   ST.provider=document.getElementById('setProvider').value;
@@ -2254,6 +2401,11 @@ var _keyCooldown = {};
 function _isKeyCooling(keyStr){ var until=_keyCooldown[keyStr]; return until && Date.now()<until; }
 function _coolKey(keyStr,seconds){ _keyCooldown[keyStr]=Date.now()+seconds*1000; }
 function _clearCool(keyStr){ delete _keyCooldown[keyStr]; }
+// ═══ FIX v3: Provider-level cooldown — bỏ qua cả provider khi liên tục 429 ═══
+var _providerCooldown = {};
+function _isProviderCool(prov){ return _providerCooldown[prov] && _providerCooldown[prov] > Date.now(); }
+function _coolProvider(prov, sec){ _providerCooldown[prov] = Date.now() + sec*1000; }
+
 
 // ═══ NEW v2: Request rate tracking — tránh spam cùng 1 key ═══
 var _keyLastRequest = {};
@@ -2273,7 +2425,7 @@ async function callAI(messages){
 
   // BƯỚC 1: Xây pool key — lọc dead + đang cooldown
   var allKeys = ST.apiKeys.filter(function(k){
-    return k.key.trim() && k.status !== 'dead' && !_isKeyCooling(k.key);
+    return k.key.trim() && k.status !== 'dead' && !_isKeyCooling(k.key) && !_isProviderCool(k.provider);
   });
 
   // Nếu hết key sạch → đợi key sớm nhất hết cooldown
@@ -2370,20 +2522,21 @@ async function callAI(messages){
         // === XỬ LÝ LỖI ===
         if(r.status === 429){
           var retryAfter = parseInt(r.headers.get('retry-after')) || 0;
-          // ═══ FIX v2: Cooldown thông minh hơn — parse retry-after chính xác ═══
           if(!retryAfter){
-            // Nếu không có retry-after header, tăng dần: 30s, 60s, 120s
             retryAfter = 30 * Math.pow(2, (keyObj._429count||0));
             keyObj._429count = (keyObj._429count||0) + 1;
           } else {
-            keyObj._429count = 0; // Reset nếu có header chính xác
+            keyObj._429count = 0;
           }
-          retryAfter = Math.min(retryAfter, 300); // Cap tối đa 5 phút
+          retryAfter = Math.min(retryAfter, 300);
           _coolKey(keyObj.key, retryAfter);
           keyObj.status = 'ratelimit';
-          console.warn('🔑 Key '+keyObj.provider+'['+(keyObj.label||'')+'] → 429, cooldown '+retryAfter+'s');
-          break; // Chuyển key khác
+          // ═══ FIX v3: Cooldown provider 30s — buộc switch sang provider khác ═══
+          _coolProvider(keyObj.provider, 30);
+          console.warn('🔑 '+keyObj.provider+' 429 → key cool '+retryAfter+'s, provider cool 30s');
+          break;
         }
+
         if(r.status === 503){
           _coolKey(keyObj.key, 30);
           if(attempt < maxRetries-1){
@@ -2431,7 +2584,12 @@ async function callAI(messages){
     }
   }
 
-  throw lastErr || new Error('Tất cả API keys đều thất bại.');
+  // ═══ FIX v3: Thông báo cụ thể hơn để user biết phải làm gì ═══
+  var hint = 'Tất cả API keys đều thất bại.';
+  if(_isProviderCool(ST.provider)){
+    hint += ' Provider "'+PROVIDERS[ST.provider].name+'" đang quá tải. Hãy thêm key Groq (miễn phí, không giới hạn ngày) tại console.groq.com';
+  }
+  throw lastErr || new Error(hint);
 }
 
 // ═══ NEW v2: callAI_chunked — Gọi AI chia batch cho nội dung dài ═══
@@ -2962,96 +3120,153 @@ function toggleOpenMode(){
   SFX.click();
 }
 
+// ═══ FIX v3: buildQuizPrompt — Đọc đúng ID Open Mode (qOpen*), prompt nén giảm token ═══
 function buildQuizPrompt(overrideCount){
-  // ═══ FIX: Nếu user đã chỉnh sửa prompt thủ công trong popup → dùng luôn prompt đó ═══
-  if(ST.customPrompt && ST.customPrompt.trim().length > 20){
-    return ST.customPrompt;
-  }
+  // Nếu user đã chỉnh & lưu prompt tùy chỉnh trong popup → dùng luôn
+  if(ST.customQuizPrompt && ST.customQuizPrompt.trim()) return ST.customQuizPrompt;
 
-  var subject = document.getElementById('qSubject').value;
-  var grade   = document.getElementById('qGrade').value;
-  var topic   = document.getElementById('qTopic').value;
-  var count   = overrideCount || document.getElementById('qCount').value;
-  var hasEmoji  = isOn('tEmoji');
-  var hasExplain= isOn('tExplain');
-  var lang = ST.lang==='vi'?'Tiếng Việt':'English';
-
-  // ═══ FIX: Open Mode — dùng ID đúng với HTML (qOpenSubject, qOpenCount, qOpenTopic, qOpenLevel) ═══
   var isOpenMode = isOn('tOpenMode');
+  var subject, grade, topic, count, difficultyLine;
+
+  var hasEmoji   = isOn('tEmoji');
+  var hasExplain = isOn('tExplain');
+  var lang       = ST.lang==='vi' ? 'Tiếng Việt' : 'English';
+
   if(isOpenMode){
-    var openSubEl    = document.getElementById('qOpenSubject');
-    var openCountEl  = document.getElementById('qOpenCount');
-    var openTopicEl  = document.getElementById('qOpenTopic');
-    var openLevelEl  = document.getElementById('qOpenLevel');
-    if(openSubEl   && openSubEl.value.trim())    subject = openSubEl.value.trim();
-    if(openCountEl && openCountEl.value)          count   = overrideCount || openCountEl.value;
-    if(openTopicEl && openTopicEl.value.trim())   topic   = openTopicEl.value.trim();
-    // Trong Chế độ mở KHÔNG có "Lớp" → bỏ trường này hoặc để trống
-    grade = '';
+    // ═══ FIX v3: Đọc ĐÚNG ID — qOpenSubject / qOpenCount / qOpenTopic / qOpenLevel ═══
+    subject = (document.getElementById('qOpenSubject').value||'').trim() || 'Tổng hợp';
+    grade   = ''; // Chế độ mở: bỏ trường lớp
+    topic   = (document.getElementById('qOpenTopic').value||'').trim();
+    count   = overrideCount || document.getElementById('qOpenCount').value;
+    var lv  = document.getElementById('qOpenLevel').value;
+    var lvMap = {beginner:'Cơ bản',intermediate:'Trung bình',advanced:'Nâng cao',expert:'Chuyên gia'};
+    difficultyLine = '- Trình độ: ' + (lvMap[lv]||'Trung bình');
+  } else {
+    subject = document.getElementById('qSubject').value;
+    grade   = document.getElementById('qGrade').value;
+    topic   = document.getElementById('qTopic').value;
+    count   = overrideCount || document.getElementById('qCount').value;
+    difficultyLine = '- Độ khó: tăng dần';
   }
 
-  var contextBlock='';
+  // Source context — pass-through giữ nguyên gốc
+  var contextBlock = '';
   if(ST.sourceType==='paste'){
-    var pasteEl=document.getElementById('pasteContent');
-    var paste=pasteEl?pasteEl.value.trim():'';
-    if(paste) contextBlock='\n\nNỘI DUNG TÀI LIỆU THAM KHẢO:\n---\n'+paste.slice(0,4000)+'\n---\n';
-  }else if(ST.sourceContext && ST.sourceType!=='ai'){
-    contextBlock='\n\nNỘI DUNG NGUỒN NGOÀI:\n---\n'+ST.sourceContext.slice(0,4000)+'\n---\n';
+    var pasteEl = document.getElementById('pasteContent');
+    var paste = pasteEl ? pasteEl.value.trim() : '';
+    if(paste) contextBlock = '\n\nNGỮ LIỆU THAM KHẢO:\n---\n' + paste.slice(0,3000) + '\n---\n';
+  } else if(ST.sourceContext && ST.sourceType!=='ai'){
+    contextBlock = '\n\nNGỮ LIỆU NGUỒN NGOÀI:\n---\n' + ST.sourceContext.slice(0,3000) + '\n---\n';
   }
 
-  // ═══ FIX: Map độ khó cho Chế độ mở (qOpenLevel) ═══
-  var difficultyLine = '- Độ khó: tăng dần';
-  if(isOpenMode){
-    var lvl = openLevelEl ? openLevelEl.value : 'intermediate';
-    var lvlMap = {
-      beginner:'Cơ bản (Beginner) — phù hợp người mới bắt đầu',
-      intermediate:'Trung bình (Intermediate) — đã có kiến thức nền',
-      advanced:'Nâng cao (Advanced) — đào sâu chuyên môn',
-      expert:'Chuyên gia (Expert) — câu hỏi khó, có tính phân tích cao'
-    };
-    difficultyLine = '- Trình độ / Độ khó: ' + (lvlMap[lvl] || 'Trung bình');
-  }
-
-  // ═══ FIX: Build prompt — Chế độ mở KHÔNG hiển thị "Lớp" ═══
+  // ═══ FIX v3: Prompt NÉN giảm ~40% token, giữ JSON schema rõ ràng ═══
   var lines = [];
-  lines.push('Bạn là chuyên gia giáo dục Việt Nam trên 20 năm kinh nghiệm.' + contextBlock);
-  lines.push('Tạo CHÍNH XÁC ' + count + ' câu hỏi trắc nghiệm cho:');
-  lines.push('- Lĩnh vực / Môn học: ' + subject);
-  if(!isOpenMode && grade) lines.push('- Lớp: ' + grade);
-  lines.push('- Chủ đề / Yêu cầu: ' + topic);
-  lines.push('- Ngôn ngữ: ' + lang);
+  lines.push('Bạn là chuyên gia giáo dục. Tạo CHÍNH XÁC '+count+' câu trắc nghiệm bằng '+lang+'.');
+  lines.push('- Lĩnh vực: '+subject);
+  if(grade) lines.push('- Lớp: '+grade);
+  lines.push('- Chủ đề/Yêu cầu: '+topic);
   lines.push(difficultyLine);
-  lines.push(hasEmoji ? '- Thêm 1 emoji phù hợp (icon field)' : '- icon: "❓"');
-  lines.push(hasExplain ? '- Viết giải thích ngắn gọn, dễ hiểu' : '- explanation: ""');
-  lines.push('');
-  lines.push('TRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, Mỗi câu hỏi phải có 4 lựa chọn (A, B, C, D) hoàn toàn khác biệt về nội dung, KHÔNG ĐƯỢC lặp lại cùng một từ hoặc cùng một nội dung trong các phương án của cùng một câu hỏi, KHÔNG text ngoài JSON:');
-  lines.push('{"title":"Tên bộ câu hỏi","subject":"' + subject + '","grade":"' + grade + '","questions":[{"id":1,"icon":"emoji","question":"Câu hỏi","options":["A","B","C","D"],"correct":0,"explanation":"giải thích"}]}');
+  lines.push(hasEmoji ? '- Mỗi câu có 1 emoji phù hợp ở field "icon"' : '- icon: "❓"');
+  lines.push(hasExplain ? '- "explanation" ngắn gọn ≤30 từ, dễ hiểu' : '- "explanation": ""');
+  lines.push('- Mỗi câu ĐÚNG 4 đáp án, "correct" là index 0–3, không trùng lặp.');
+  lines.push(contextBlock);
+  lines.push('CHỈ trả JSON thuần (không markdown, không text ngoài JSON):');
+  lines.push('{"title":"...","questions":[{"id":1,"icon":"❓","question":"...","options":["A","B","C","D"],"correct":0,"explanation":"..."}]}');
 
   return lines.join('\n');
 }
 
 
-// ═══ FIX v2: buildFlashPrompt — Hỗ trợ overrideCount cho batch ═══
+// ═══ FIX v3: buildFlashPrompt — nén prompt + hỗ trợ custom prompt ═══
 function buildFlashPrompt(overrideCount){
+  if(ST.customFlashPrompt && ST.customFlashPrompt.trim()) return ST.customFlashPrompt;
+
   var subject = document.getElementById('fcSubject').value;
   var grade   = document.getElementById('fcGrade').value;
   var topic   = document.getElementById('fcTopic').value;
   var count   = overrideCount || document.getElementById('fcCount').value;
-  var type    = document.getElementById('fcType').value;
-  var typeMap = {qa:'Câu hỏi - Trả lời',vocab:'Từ vựng - Nghĩa',formula:'Công thức - Ví dụ',translate:'Từ - Dịch',fill:'Điền vào chỗ trống'};
-  var contextBlock='';
-  if(ST.sourceContext) contextBlock='\nNguồn tham khảo: '+ST.sourceContext.slice(0,2000)+'\n';
+  var lang    = ST.lang==='vi' ? 'Tiếng Việt' : 'English';
 
-  return 'Bạn là chuyên gia giáo dục tạo flashcard.' + contextBlock + '\n'
-    + 'Tạo ' + count + ' flashcard kiểu "' + (typeMap[type]||type) + '" cho:\n'
-    + '- Môn: ' + subject + ', Lớp: ' + grade + ', Chủ đề: ' + topic + '\n'
-    + 'Mỗi flashcard: mặt trước ngắn gọn (dưới 20 từ), mặt sau chính xác có ví dụ. Thêm emoji.\n'
-    + 'TRẢ VỀ JSON, KHÔNG markdown code block:\n'
-    + '{"title":"Tên bộ thẻ","cards":[{"id":1,"icon":"emoji","front":"Mặt trước","frontSub":"","back":"Mặt sau","backSub":"","hint":"Mẹo ghi nhớ"}]}';
+  var contextBlock = '';
+  if(ST.sourceContext){
+    contextBlock = '\n\nNGỮ LIỆU:\n---\n' + ST.sourceContext.slice(0,3000) + '\n---\n';
+  }
+
+  var lines = [];
+  lines.push('Tạo CHÍNH XÁC '+count+' flashcard bằng '+lang+'.');
+  lines.push('- Môn: '+subject+' · Lớp: '+grade);
+  lines.push('- Chủ đề: '+topic);
+  lines.push('- "front" ngắn gọn (từ/khái niệm), "back" định nghĩa ≤40 từ.');
+  lines.push('- "icon" là 1 emoji phù hợp.');
+  lines.push('- "frontSub"/"backSub"/"hint" có thể bỏ trống.');
+  lines.push(contextBlock);
+  lines.push('CHỈ trả JSON thuần:');
+  lines.push('{"title":"...","cards":[{"id":1,"icon":"📝","front":"...","frontSub":"","back":"...","backSub":"","hint":""}]}');
+
+  return lines.join('\n');
 }
 
 function previewPrompt(){document.getElementById('promptPreviewText').textContent=buildQuizPrompt();openModal('promptModal')}
 function copyPrompt(){navigator.clipboard.writeText(document.getElementById('promptPreviewText').textContent).then(function(){toast('Đã copy','Prompt đã sao chép','success')})}
+
+// ═══ FIX v3: Open Mode toggle + Prompt customization ═══
+function toggleOpenMode(){
+  var openFields = document.getElementById('openModeFields');
+  var stdFields  = document.getElementById('standardModeFields');
+  if(!openFields || !stdFields) return;
+  var isOn_ = isOn('tOpenMode');
+  if(isOn_){
+    openFields.classList.remove('hidden');
+    stdFields.classList.add('hidden');
+  } else {
+    openFields.classList.add('hidden');
+    stdFields.classList.remove('hidden');
+  }
+  // Reset prompt tùy chỉnh khi đổi mode
+  ST.customQuizPrompt = '';
+  SFX.click();
+}
+
+function previewPrompt(){
+  var topicQ  = (document.getElementById('qTopic').value||'').trim();
+  var topicO  = (document.getElementById('qOpenTopic').value||'').trim();
+  if(!topicQ && !topicO){
+    toast('Thiếu chủ đề','Nhập chủ đề trước khi xem prompt','warn');
+    return;
+  }
+  var p = ST.customQuizPrompt && ST.customQuizPrompt.trim() ? ST.customQuizPrompt : buildQuizPrompt();
+  document.getElementById('promptPreviewText').value = p;
+  openModal('promptModal');
+}
+
+function copyPrompt(){
+  var t = document.getElementById('promptPreviewText').value || '';
+  if(!t){ toast('Trống','Không có prompt để copy','warn'); return; }
+  navigator.clipboard.writeText(t).then(function(){
+    toast('📋 Đã copy','Prompt đã sao chép','success'); SFX.save();
+  }).catch(function(){
+    var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    toast('📋 Đã copy','','success');
+  });
+}
+
+function saveCustomPrompt(){
+  var t = (document.getElementById('promptPreviewText').value||'').trim();
+  if(!t){ toast('Trống','Prompt không thể rỗng','warn'); return; }
+  ST.customQuizPrompt = t;
+  saveAll();
+  toast('💾 Đã lưu','Prompt tùy chỉnh sẽ được dùng cho lần tạo bài tới','success');
+  closeModal('promptModal'); SFX.save();
+}
+
+function resetCustomPrompt(){
+  ST.customQuizPrompt = '';
+  saveAll();
+  document.getElementById('promptPreviewText').value = buildQuizPrompt();
+  toast('🔄 Đã khôi phục','Prompt trở về mặc định','info');
+}
+
 // ══════════════════════════════════════════
 // QUIZ ENGINE (FIX v2: Batch support cho >15 câu)
 // ══════════════════════════════════════════
