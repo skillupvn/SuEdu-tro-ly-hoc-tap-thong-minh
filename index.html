@@ -1055,17 +1055,24 @@ code{background:var(--bg4);padding:2px 6px;border-radius:4px;font-size:.85em;fon
      MODAL: PROMPT PREVIEW — GIỮ NGUYÊN GỐC
 ═══════════════════════════════════════ -->
 <div class="modal-overlay hidden" id="promptModal" onclick="closeModalOut(event,'promptModal')">
-  <div class="modal" style="max-width:700px">
+  <div class="modal" style="max-width:760px">
     <div class="modal-header">
-      <div class="modal-title">👁️ Prompt sẽ gửi cho AI</div>
+      <div class="modal-title">👁️ Prompt sẽ gửi cho AI (có thể chỉnh sửa tự do)</div>
       <button class="btn btn-icon btn-sm" onclick="closeModal('promptModal')">✕</button>
     </div>
     <div class="modal-body">
-      <pre id="promptPreviewText" style="background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:.82rem;line-height:1.6;color:var(--text3);white-space:pre-wrap;max-height:60vh;overflow-y:auto"></pre>
+      <div class="alert alert-info" style="margin-bottom:10px">✏️ Bạn có thể chỉnh sửa Prompt bên dưới <strong>không giới hạn ký tự</strong>. Sau khi bấm "💾 Lưu Prompt", lần "Tạo bài trắc nghiệm" tiếp theo sẽ dùng đúng nội dung bạn đã chỉnh.</div>
+      <textarea id="promptPreviewText"
+        style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.85rem;line-height:1.6;color:var(--text);min-height:50vh;max-height:65vh;resize:vertical;font-family:'Segoe UI',monospace;white-space:pre-wrap;overflow-y:auto"
+        spellcheck="false"
+        placeholder="Prompt sẽ hiển thị ở đây..."></textarea>
+      <div id="promptSavedHint" class="text-muted" style="font-size:.78rem;margin-top:6px">💡 Mở popup này nhiều lần → hệ thống sẽ tự build lại prompt từ dữ liệu mới nhất. Đã chỉnh sửa? Nhớ bấm "💾 Lưu Prompt" để áp dụng.</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-secondary btn-sm" onclick="copyPrompt()">📋 Copy Prompt</button>
-      <button class="btn btn-primary btn-sm" onclick="closeModal('promptModal')">Đóng</button>
+      <button class="btn btn-secondary btn-sm" onclick="resetCustomPrompt()" title="Khôi phục prompt mặc định">🔄 Khôi phục mặc định</button>
+      <button class="btn btn-secondary btn-sm" onclick="copyPrompt()">📋 Copy</button>
+      <button class="btn btn-primary btn-sm" onclick="saveCustomPrompt()">💾 Lưu Prompt</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('promptModal')">Đóng</button>
     </div>
   </div>
 </div>
@@ -1463,6 +1470,94 @@ function addUrlField(){
 
 function toggleCustomTimer(sel){
   document.getElementById('customTimerWrap').style.display=sel.value==='custom'?'flex':'none';
+}
+
+// ═══ FIX: Các hàm xử lý popup Prompt — cho phép xem, chỉnh sửa, lưu, khôi phục ═══
+
+// Mở popup và hiển thị prompt hiện tại
+function previewPrompt(){
+  // Kiểm tra cơ bản trước khi build
+  var isOpen = isOn('tOpenMode');
+  var topic = '';
+  if(isOpen){
+    var t1 = document.getElementById('qOpenTopic');
+    topic = t1 ? t1.value.trim() : '';
+  } else {
+    topic = document.getElementById('qTopic').value.trim();
+  }
+
+  var ta = document.getElementById('promptPreviewText');
+  if(!ta) return;
+
+  // Nếu user đã chỉnh + lưu trước đó → hiện đúng phiên bản đã lưu
+  if(ST.customPrompt && ST.customPrompt.trim().length > 20){
+    ta.value = ST.customPrompt;
+    var hint = document.getElementById('promptSavedHint');
+    if(hint) hint.innerHTML = '✅ Đang hiển thị <strong>Prompt đã chỉnh sửa & lưu</strong>. Bấm "🔄 Khôi phục mặc định" để build lại từ form.';
+  } else {
+    if(!topic){
+      ta.value = '⚠️ Vui lòng nhập '+(isOpen?'"Mô tả chi tiết yêu cầu"':'"Chủ đề / Nội dung ôn tập"')+' trước khi xem Prompt.';
+    } else {
+      // Tạm thời clear customPrompt để buildQuizPrompt build mới
+      var saved = ST.customPrompt;
+      ST.customPrompt = '';
+      ta.value = buildQuizPrompt();
+      ST.customPrompt = saved; // restore (nhưng đang trống)
+    }
+    var hint2 = document.getElementById('promptSavedHint');
+    if(hint2) hint2.innerHTML = '💡 Đây là Prompt mặc định build từ form. Bạn có thể chỉnh tự do rồi bấm "💾 Lưu Prompt".';
+  }
+  openModal('promptModal');
+  SFX.click();
+}
+
+// Copy nội dung textarea
+function copyPrompt(){
+  var ta = document.getElementById('promptPreviewText');
+  if(!ta || !ta.value){ toast('Không có nội dung','','warn'); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(function(){
+      toast('📋 Đã copy','Prompt đã được sao chép','success');
+    }).catch(function(){
+      ta.select();
+      try{ document.execCommand('copy'); toast('📋 Đã copy','','success'); }catch(e){}
+    });
+  } else {
+    ta.select();
+    try{ document.execCommand('copy'); toast('📋 Đã copy','','success'); }catch(e){}
+  }
+  SFX.click();
+}
+
+// Lưu prompt đã chỉnh — sẽ được dùng khi "Tạo bài trắc nghiệm"
+function saveCustomPrompt(){
+  var ta = document.getElementById('promptPreviewText');
+  if(!ta) return;
+  var val = ta.value.trim();
+  if(val.length < 20){
+    toast('Prompt quá ngắn','Cần ít nhất 20 ký tự','warn');
+    return;
+  }
+  ST.customPrompt = val;
+  saveAll();
+  toast('💾 Đã lưu Prompt','Prompt đã chỉnh sẽ được dùng cho lần tạo bài tiếp theo','success',4000);
+  SFX.save();
+  closeModal('promptModal');
+}
+
+// Khôi phục prompt mặc định (xóa bản đã chỉnh)
+function resetCustomPrompt(){
+  ST.customPrompt = '';
+  saveAll();
+  // Build lại prompt mặc định và hiển thị
+  var ta = document.getElementById('promptPreviewText');
+  if(ta){
+    ta.value = buildQuizPrompt();
+  }
+  var hint = document.getElementById('promptSavedHint');
+  if(hint) hint.innerHTML = '✅ Đã khôi phục Prompt mặc định. Bạn có thể chỉnh lại rồi "💾 Lưu Prompt".';
+  toast('🔄 Đã khôi phục','Prompt đã reset về mặc định','info');
+  SFX.click();
 }
 
 // NEW v2: Toggle chế độ mở (open mode) cho Quiz
@@ -2850,8 +2945,29 @@ function handleFiles(e){
 // BUILD PROMPT (FIX v2: Hỗ trợ Open Mode + batch count)
 // ══════════════════════════════════════════
 
-// ═══ FIX v2: buildQuizPrompt — Hỗ trợ overrideCount cho batch, hỗ trợ Open Mode ═══
+// ═══ FIX: Hàm toggleOpenMode — Ẩn/hiện các ô tương ứng khi bật/tắt Chế độ mở ═══
+function toggleOpenMode(){
+  var isOpen   = isOn('tOpenMode');
+  var stdBox   = document.getElementById('standardModeFields');
+  var openBox  = document.getElementById('openModeFields');
+  if(isOpen){
+    if(stdBox)  stdBox.classList.add('hidden');
+    if(openBox) openBox.classList.remove('hidden');
+  } else {
+    if(stdBox)  stdBox.classList.remove('hidden');
+    if(openBox) openBox.classList.add('hidden');
+  }
+  // ═══ Khi đổi chế độ, xóa prompt tùy chỉnh đã lưu (vì context đã thay đổi) ═══
+  ST.customPrompt = '';
+  SFX.click();
+}
+
 function buildQuizPrompt(overrideCount){
+  // ═══ FIX: Nếu user đã chỉnh sửa prompt thủ công trong popup → dùng luôn prompt đó ═══
+  if(ST.customPrompt && ST.customPrompt.trim().length > 20){
+    return ST.customPrompt;
+  }
+
   var subject = document.getElementById('qSubject').value;
   var grade   = document.getElementById('qGrade').value;
   var topic   = document.getElementById('qTopic').value;
@@ -2860,16 +2976,18 @@ function buildQuizPrompt(overrideCount){
   var hasExplain= isOn('tExplain');
   var lang = ST.lang==='vi'?'Tiếng Việt':'English';
 
-  // ═══ NEW v2: Open Mode fields ═══
+  // ═══ FIX: Open Mode — dùng ID đúng với HTML (qOpenSubject, qOpenCount, qOpenTopic, qOpenLevel) ═══
   var isOpenMode = isOn('tOpenMode');
   if(isOpenMode){
-    var openSubEl    = document.getElementById('openSubject');
-    var openCountEl  = document.getElementById('openCount');
-    var openPromptEl = document.getElementById('openPrompt');
-    var openDiffEl   = document.getElementById('openDifficulty');
-    if(openSubEl   && openSubEl.value.trim())   subject = openSubEl.value.trim();
-    if(openCountEl && openCountEl.value)         count   = overrideCount || openCountEl.value;
-    if(openPromptEl&& openPromptEl.value.trim()) topic   = openPromptEl.value.trim();
+    var openSubEl    = document.getElementById('qOpenSubject');
+    var openCountEl  = document.getElementById('qOpenCount');
+    var openTopicEl  = document.getElementById('qOpenTopic');
+    var openLevelEl  = document.getElementById('qOpenLevel');
+    if(openSubEl   && openSubEl.value.trim())    subject = openSubEl.value.trim();
+    if(openCountEl && openCountEl.value)          count   = overrideCount || openCountEl.value;
+    if(openTopicEl && openTopicEl.value.trim())   topic   = openTopicEl.value.trim();
+    // Trong Chế độ mở KHÔNG có "Lớp" → bỏ trường này hoặc để trống
+    grade = '';
   }
 
   var contextBlock='';
@@ -2881,26 +2999,37 @@ function buildQuizPrompt(overrideCount){
     contextBlock='\n\nNỘI DUNG NGUỒN NGOÀI:\n---\n'+ST.sourceContext.slice(0,4000)+'\n---\n';
   }
 
+  // ═══ FIX: Map độ khó cho Chế độ mở (qOpenLevel) ═══
   var difficultyLine = '- Độ khó: tăng dần';
   if(isOpenMode){
-    var diff = openDiffEl ? openDiffEl.value : 'mixed';
-    var diffMap = {easy:'dễ (lớp nhỏ)',medium:'trung bình',hard:'khó (nâng cao)',mixed:'tăng dần'};
-    difficultyLine = '- Độ khó: ' + (diffMap[diff] || 'tăng dần');
+    var lvl = openLevelEl ? openLevelEl.value : 'intermediate';
+    var lvlMap = {
+      beginner:'Cơ bản (Beginner) — phù hợp người mới bắt đầu',
+      intermediate:'Trung bình (Intermediate) — đã có kiến thức nền',
+      advanced:'Nâng cao (Advanced) — đào sâu chuyên môn',
+      expert:'Chuyên gia (Expert) — câu hỏi khó, có tính phân tích cao'
+    };
+    difficultyLine = '- Trình độ / Độ khó: ' + (lvlMap[lvl] || 'Trung bình');
   }
 
-  return 'Bạn là chuyên gia giáo dục Việt Nam trên 20 năm kinh nghiệm.' + contextBlock + '\n'
-    + 'Tạo CHÍNH XÁC ' + count + ' câu hỏi trắc nghiệm cho:\n'
-    + '- Môn: ' + subject + '\n'
-    + '- Lớp: ' + grade + '\n'
-    + '- Chủ đề: ' + topic + '\n'
-    + '- Ngôn ngữ: ' + lang + '\n'
-    + difficultyLine + '\n'
-    + (hasEmoji ? '- Thêm 1 emoji phù hợp (icon field)' : '- icon: "❓"') + '\n'
-    + (hasExplain ? '- Viết giải thích ngắn gọn cho lớp '+grade : '- explanation: ""') + '\n'
-    + '\nTRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, Mỗi câu hỏi phải có 4 lựa chọn (A, B, C, D) hoàn toàn khác biệt về nội dung,KHÔNG ĐƯỢC lặp lại cùng một từ hoặc cùng một nội dung trong các phương án của cùng một câu hỏi, KHÔNG text ngoài JSON:\n'
-    + '{"title":"Tên bộ câu hỏi","subject":"'+subject+'","grade":"'+grade+'","questions":[{"id":1,"icon":"emoji","question":"Câu hỏi","options":["A","B","C","D"],"correct":0,"explanation":"Giải thích"}]}\n'
-    + 'Lưu ý: "correct" là INDEX (0-3) của đáp án đúng.';
+  // ═══ FIX: Build prompt — Chế độ mở KHÔNG hiển thị "Lớp" ═══
+  var lines = [];
+  lines.push('Bạn là chuyên gia giáo dục Việt Nam trên 20 năm kinh nghiệm.' + contextBlock);
+  lines.push('Tạo CHÍNH XÁC ' + count + ' câu hỏi trắc nghiệm cho:');
+  lines.push('- Lĩnh vực / Môn học: ' + subject);
+  if(!isOpenMode && grade) lines.push('- Lớp: ' + grade);
+  lines.push('- Chủ đề / Yêu cầu: ' + topic);
+  lines.push('- Ngôn ngữ: ' + lang);
+  lines.push(difficultyLine);
+  lines.push(hasEmoji ? '- Thêm 1 emoji phù hợp (icon field)' : '- icon: "❓"');
+  lines.push(hasExplain ? '- Viết giải thích ngắn gọn, dễ hiểu' : '- explanation: ""');
+  lines.push('');
+  lines.push('TRẢ VỀ JSON ĐÚNG FORMAT, KHÔNG markdown code block, Mỗi câu hỏi phải có 4 lựa chọn (A, B, C, D) hoàn toàn khác biệt về nội dung, KHÔNG ĐƯỢC lặp lại cùng một từ hoặc cùng một nội dung trong các phương án của cùng một câu hỏi, KHÔNG text ngoài JSON:');
+  lines.push('{"title":"Tên bộ câu hỏi","subject":"' + subject + '","grade":"' + grade + '","questions":[{"id":1,"icon":"emoji","question":"Câu hỏi","options":["A","B","C","D"],"correct":0,"explanation":"giải thích"}]}');
+
+  return lines.join('\n');
 }
+
 
 // ═══ FIX v2: buildFlashPrompt — Hỗ trợ overrideCount cho batch ═══
 function buildFlashPrompt(overrideCount){
@@ -2930,14 +3059,37 @@ var QUIZ_BATCH_THRESHOLD = 15; // ═══ NEW v2: Ngưỡng chia batch ══�
 
 async function startQuiz(){
   SFX.start();
-  var topic=document.getElementById('qTopic').value.trim();
-  if(!topic){toast('Thiếu chủ đề','Nhập chủ đề ôn tập','warn');return;}
-  if(!ST.apiKeys.filter(function(k){return k.key.trim()}).length){toast('Chưa có API key','Vào Cài đặt thêm','error');openSettings();return;}
+
+  // ═══ FIX: Hỗ trợ cả Chế độ thường VÀ Chế độ mở ═══
+  var isOpen = isOn('tOpenMode');
+  var topic = '';
+  if(isOpen){
+    // Chế độ mở: chủ đề lấy từ ô "Mô tả chi tiết yêu cầu" (qOpenTopic)
+    var openTopicEl = document.getElementById('qOpenTopic');
+    topic = openTopicEl ? openTopicEl.value.trim() : '';
+    if(!topic){
+      toast('Thiếu mô tả yêu cầu','Hãy nhập "Mô tả chi tiết yêu cầu" trước khi tạo bài','warn');
+      return;
+    }
+  } else {
+    // Chế độ thường: lấy từ ô qTopic
+    topic = document.getElementById('qTopic').value.trim();
+    if(!topic){
+      toast('Thiếu chủ đề','Nhập chủ đề ôn tập','warn');
+      return;
+    }
+  }
+
+  if(!ST.apiKeys.filter(function(k){return k.key.trim()}).length){
+    toast('Chưa có API key','Vào Cài đặt thêm','error');
+    openSettings();
+    return;
+  }
 
   var totalCount = parseInt(document.getElementById('qCount').value) || 10;
-  // ═══ NEW v2: Open Mode count override ═══
-  if(isOn('tOpenMode')){
-    var openCountEl = document.getElementById('openCount');
+  // ═══ FIX: Open Mode dùng ID qOpenCount (đúng với HTML) ═══
+  if(isOpen){
+    var openCountEl = document.getElementById('qOpenCount');
     if(openCountEl && openCountEl.value) totalCount = parseInt(openCountEl.value) || totalCount;
   }
 
